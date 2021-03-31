@@ -3,7 +3,7 @@ import os
 class Config(object):
     """Base Config Object"""
     DEBUG = False
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = os.urandom(24)
     # UPLOAD_FOLDER = './uploads'
 
 
