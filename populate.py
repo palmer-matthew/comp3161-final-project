@@ -217,10 +217,10 @@ if __name__ == '__main__':
 
         user_stmt = 'INSERT INTO User(fname,lname,password) VALUES("%s", "%s", "%s");\r'
         fake = Faker()
-        nusers = 5 #Change to 250,000 when it is time to create
-
+        nusers = 250000 #Change to 250,000 when it is time to create
+        # generate_password_hash(fake.password(length=10, special_chars=False), method='pbkdf2:sha256')
         for i in range(nusers): 
-            r.write(user_stmt % (fake.first_name(), fake.last_name(), generate_password_hash(fake.password(length=10, special_chars=False), method='pbkdf2:sha256')))
+            r.write(user_stmt % (fake.first_name(), fake.last_name(), fake.password(length=10, special_chars=False)))
         r.write(newline)
 
         print("Finished Inserting >200k User INSERT Statements" + "."*10)
@@ -230,7 +230,7 @@ if __name__ == '__main__':
         r.write("/*======================================INSERTING 600,000 Recipes and Connections======================================*/\r")
         r.write(newline)
 
-        num = 5
+        num = 600000
         recipe_stmt = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime) VALUES(%d, "%s", "%s", %d);\r'
         meal_stmt = 'INSERT INTO Meal(mealID, inputServing, imageUpload, calorieCount) VALUES(%d, %d, "%s", %d);\r'
         creates_stmt = 'INSERT INTO creates(recipeID, mealID) VALUES(%d, %d);\r'
