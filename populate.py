@@ -2,7 +2,7 @@ import random, os
 from faker import Faker
 from werkzeug.security import generate_password_hash
 from dbhelper import *
-
+import _mysql_connector 
 
 #Ingredients, Adjectives, Units, Quantities
 
@@ -23,118 +23,35 @@ quantity =  ['1/4', '1/2', '3/4', '1', '1 1/2', '2', '2 1/4', '4', '6', '10']
 
 dishes = ['cake', 'juice', 'alfredo', 'risotto', 'chips', 'tart', 'pudding', 'casserole', 'soup', 'N/A']
 
+tables = None
 measurements = None
 recipes = []
 
-#Tables Info
+names = ['Recipe', 'Meal', 'MealPlan', 'User', 'Ingredient', 'Measurement', 'Instruction', 'includes', 'has', 'kitchen', 'uses', 'contains','creates','adds']
+lines = [['recipeID int auto_increment', 'creationDate date default CURRENT_DATE', 'recipeName varchar(255)', 'preparationTime int', 'primary key(recipeID)'], \
+         ['mealID int auto_increment', 'inputServing int','imageUpload varchar(255)', 'calorieCount int', 'primary key(mealID)'], \
+         ['mealPlanID int auto_increment','primary key(mealPlanID)'],\
+         ['userID int auto_increment','fname varchar(50)','lname varchar(50)','password varchar(255)', 'primary key(userID)'],\
+         ['ingredientID int auto_increment', 'ingredientName varchar(255)','primary key(ingredientID)'], \
+         ['measurementID int auto_increment','quantity varchar(10)','unit varchar(50)','primary key(measurementID)'], \
+         ['recipeID int', 'stepNumber int', 'direction varchar(255)', 'primary key(recipeID, stepNumber)', 'foreign key(recipeID) references Recipe(recipeID) on delete cascade'], \
+         ['mealPlanID int','mealID int','primary key(mealPlanID, mealID)','foreign key(mealPlanID) references MealPlan(mealPlanID) on delete cascade','foreign key(mealID) references Meal(mealID) on delete cascade'], \
+         ['mealPlanID int','userID int','primary key(mealPlanID, userID)','foreign key(mealPlanID) references MealPlan(mealPlanID) on delete cascade','foreign key(userID) references User(userID) on delete cascade'], \
+         ['ingredientID int','userID int','primary key(ingredientID, userID)','foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade','foreign key(userID) references User(userID) on delete cascade'], \
+         ['measurementID int','ingredientID int','primary key(measurementID, ingredientID)','foreign key(measurementID) references Measurement(measurementID) on delete cascade','foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade'], \
+         ['recipeID int','ingredientID int','primary key(recipeID, ingredientID)','foreign key(recipeID) references Recipe(recipeID) on delete cascade','foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade'], \
+         ['recipeID int','mealID int','primary key(recipeID, mealID)','foreign key(recipeID) references Recipe(recipeID) on delete cascade','foreign key(mealID) references Meal(mealID) on delete cascade'], \
+         ['recipeID int','userID int','primary key(userID, recipeID)','foreign key(recipeID) references Recipe(recipeID) on delete cascade','foreign key(userID) references User(userID) on delete cascade']  
+        ]
 
-tables = """
-CREATE TABLE Recipe(
-    recipeID int auto_increment,
-    creationDate date default CURRENT_DATE, 
-    recipeName varchar(255),
-    preparationTime int,
-    primary key(recipeID)   
-);
 
-CREATE TABLE Meal(
-    mealID int auto_increment,
-    inputServing int, 
-    imageUpload varchar(255),
-    calorieCount int,
-    primary key(mealID)   
-);
-
-CREATE TABLE MealPlan(
-    mealPlanID int auto_increment,
-    primary key(mealPlanID)   
-);
-
-CREATE TABLE User(
-    userID int auto_increment,
-    fname varchar(50),
-    lname varchar(50), 
-    password varchar(255),
-    primary key(userID)   
-);
-
-CREATE TABLE Ingredient(
-    ingredientID int auto_increment,
-    ingredientName varchar(255),
-    primary key(ingredientID)   
-);
-
-CREATE TABLE Measurement(
-    measurementID int auto_increment,
-    quantity varchar(10), 
-    unit varchar(50),
-    primary key(measurementID)   
-);
-
-CREATE TABLE Instruction(
-    recipeID int,
-    stepNumber int,
-    direction varchar(255),
-    primary key(recipeID, stepNumber),
-    foreign key(recipeID) references Recipe(recipeID) on delete cascade
-);
-
-CREATE TABLE includes(
-    mealPlanID int,
-    mealID int ,
-    primary key(mealPlanID, mealID),
-    foreign key(mealPlanID) references MealPlan(mealPlanID) on delete cascade,
-    foreign key(mealID) references Meal(mealID) on delete cascade
-);
-
-CREATE TABLE has(
-    mealPlanID int,
-    userID int,
-    primary key(mealPlanID, userID),
-    foreign key(mealPlanID) references MealPlan(mealPlanID) on delete cascade,
-    foreign key(userID) references User(userID) on delete cascade
-);
-
-CREATE TABLE kitchen(
-    ingredientID int,
-    userID int,
-    primary key(ingredientID, userID),
-    foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade,
-    foreign key(userID) references User(userID) on delete cascade
-);
-
-CREATE TABLE uses(
-    measurementID int,
-    ingredientID int,
-    primary key(measurementID, ingredientID),
-    foreign key(measurementID) references Measurement(measurementID) on delete cascade,
-    foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade
-);
-
-CREATE TABLE contains(
-    recipeID int,
-    ingredientID int,
-    primary key(recipeID, ingredientID),
-    foreign key(recipeID) references Recipe(recipeID) on delete cascade,
-    foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade
-);
-
-CREATE TABLE creates(
-    recipeID int,
-    mealID int,
-    primary key(recipeID, mealID),
-    foreign key(recipeID) references Recipe(recipeID) on delete cascade,
-    foreign key(mealID) references Meal(mealID) on delete cascade  
-);
-
-CREATE TABLE adds(
-    recipeID int,
-    userID int,
-    primary key(userID, recipeID),
-    foreign key(recipeID) references Recipe(recipeID) on delete cascade,
-    foreign key(userID) references User(userID) on delete cascade
-);
-"""
+def createTable():
+    result = []
+    table_stmt = 'CREATE TABLE %s(%s);\r'
+    for i,val in enumerate(names):
+        result.append(table_stmt % (val, ','.join(lines[i])))
+    return result
+        
 def createMeasurementList():
     global unit, quantity
     result, count = [], 1
@@ -159,6 +76,7 @@ def createIngredientsList():
 if __name__ == '__main__':
     measurements = createMeasurementList()
     ingredients, dver = createIngredientsList()
+    tables = createTable()
     with open('./planner.sql', 'w+') as r:
 
         print("Creating planner.sql" + "."*10)
@@ -168,43 +86,39 @@ if __name__ == '__main__':
         print("Inserting Header" + "."*10)
         
         #Insert the inital header into the documents
-        # r.write("DROP DATABASE IF EXISTS planner;\r")
-        # r.write("CREATE DATABASE planner;\r")
+        r.write("DROP DATABASE IF EXISTS planner;\r")
+        r.write("CREATE DATABASE planner;\r")
         r.write("USE planner;\r")
-        r.write(newline)
 
         print("Finished Inserting Header" + "."*10)
         
         print("Inserting CREATE Statements" + "."*10)
         
         #insert the create tables statements
-        r.write(tables)
-        r.write(newline)
+        r.write("/*======================================CREATE STATEMENTS======================================*/\r")
+        for i in tables: 
+            r.write(i)
 
         print("Finished Inserting CREATE Statements" + "."*10)
 
         print("Inserting Measurement INSERT Statements" + "."*10)
 
         r.write("/*======================================INSERTING Measurements======================================*/\r")
-        r.write(newline)
 
         measure_stmt = 'INSERT INTO Measurement(measurementID, quantity, unit) VALUES(%d, "%s", "%s");\r'
 
         for i in measurements:
             r.write(measure_stmt % i)
-        r.write(newline)
 
         print("Finished Inserting Measurement INSERT Statements" + "."*10)
 
         print("Inserting Ingredient INSERT Statements" + "."*10)
 
         r.write("/*======================================INSERTING Ingredients======================================*/\r")
-        r.write(newline)
         ingredient_stmt = 'INSERT INTO Ingredient(ingredientID, ingredientName) VALUES(%d, "%s");\r'
 
         for i in ingredients:
             r.write(ingredient_stmt % i)
-        r.write(newline)
 
         print("Finished Inserting Ingredient INSERT Statements" + "."*10)
      
@@ -213,24 +127,21 @@ if __name__ == '__main__':
         
         #insert 200,000 users
         r.write("/*======================================INSERTING 250,000 USERS======================================*/\r")
-        r.write(newline)
 
         user_stmt = 'INSERT INTO User(fname,lname,password) VALUES("%s", "%s", "%s");\r'
         fake = Faker()
-        nusers = 250000 #Change to 250,000 when it is time to create
+        nusers = 20 #Change to 250,000 when it is time to create
         # generate_password_hash(fake.password(length=10, special_chars=False), method='pbkdf2:sha256')
         for i in range(nusers): 
             r.write(user_stmt % (fake.first_name(), fake.last_name(), fake.password(length=10, special_chars=False)))
-        r.write(newline)
 
         print("Finished Inserting >200k User INSERT Statements" + "."*10)
 
         #insert 600,000
         print("Inserting Recipe INSERT Statements and Connection Statements" + "."*10)
         r.write("/*======================================INSERTING 600,000 Recipes and Connections======================================*/\r")
-        r.write(newline)
 
-        num = 600000
+        num = 10
         recipe_stmt = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime) VALUES(%d, "%s", "%s", %d);\r'
         meal_stmt = 'INSERT INTO Meal(mealID, inputServing, imageUpload, calorieCount) VALUES(%d, %d, "%s", %d);\r'
         creates_stmt = 'INSERT INTO creates(recipeID, mealID) VALUES(%d, %d);\r'
@@ -259,59 +170,64 @@ if __name__ == '__main__':
             recipes.append((i+1, created_date, recipe_name, preptime, ingredient_list))
 
             r.write(recipe_stmt % (i+1, created_date, recipe_name, preptime))
-        r.write(newline)
 
         for i in range(4):
             if i == 0:
                 r.write("/*======================================INSERTING Meals======================================*/\r")
-                r.write(newline)
+    
 
                 for i in recipes:
                     serving = random.randint(1,10)
                     image_name = fake.image_url()
                     calorie = random.randint(1, 7000)
                     r.write(meal_stmt % (i[0], serving, image_name, calorie))
-                r.write(newline)
+    
             elif i == 1:
                 r.write("/*======================================INSERTING Relationship: creates======================================*/\r")
-                r.write(newline)
+    
 
                 for i in recipes:
                     r.write(creates_stmt % (i[0], i[0]))
-                r.write(newline)
+    
             elif i == 2:
                 r.write("/*======================================INSERTING Relationship: contains======================================*/\r")
-                r.write(newline)
+    
 
                 for i in recipes:
                     for j in i[4]:
                         r.write(contains_stmt % (i[0], j[0]))
-                r.write(newline)
+    
             elif i == 3:
                 r.write("/*======================================INSERTING Instructions======================================*/\r")
-                r.write(newline)
+    
 
                 for i in recipes:
                     for j in range(random.randint(1,3)):
                         direction = fake.paragraph()
                         r.write(instruct_stmt % (i[0], j+1, direction))
-                r.write(newline)
-        print("Finished Inserting Recipe INSERT Statements and Connection Statements" + "."*10)
     
-    # #Execute the File to Populate the Table
-    # root_dir = os.getcwd()
-    # path_to_file = os.path.join(root_dir,'planner.sql')
-    # query = f"\. {path_to_file}"
-    # connection = connect()
-    # if connection == None:
-    #     print('Failed to Connect to Database')
-    #     exit()
-    # else:
-    #     print('Excecuting File')
-    #     result = executeQuery(query, connection)
-    #     if result == None:
-    #         print('Failed to execute Query')
-    #         close(connection)
-    #         exit()
-    #     else:
-    #         print('Sucess...... Closing Script')
+        print("Finished Inserting Recipe INSERT Statements and Connection Statements" + "."*10)
+
+    print('Connecting to SQL Server')
+    connection = connect()
+    if connection == None:
+        print('Failed to Connect')
+        exit()
+    else:
+        print('Connection Established')
+        print('Excecuting planner.sql')
+        try:
+            with open('planner.sql', 'r') as r:
+                with connection.cursor() as curs:
+                    for line in r:
+                        if line == '\r' or line == '':
+                            continue
+                        else:
+                            curs.execute(line)
+                            connection.commit()
+            close(connection)
+            print('Sucess...... Closing Script')
+        except Exception as e:
+            print(f'Error Occured while exceuting Script\n{e}')
+            exit()
+        
