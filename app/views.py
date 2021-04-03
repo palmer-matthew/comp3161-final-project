@@ -1,10 +1,34 @@
+
 from app import app
-from flask import render_template, url_for, redirect, flash, request, session
+
+from flask import render_template, url_for, redirect, flash, request, session, abort
 
 
 @app.route("/")
 def home():
     return render_template('home.html')
+
+@app.route("/login", methods=['POST', 'GET'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != app.config['ADMIN_USERNAME'] or request.form['password'] != app.config['ADMIN_PASSWORD']:
+            error = 'Invalid username or password'
+        else:
+            session['logged_in'] = True
+            
+        '''    flash('You were logged in', 'success')
+            return redirect(url_for('upload')) '''
+    return render_template('login.html', error=error)
+
+
+@app.route("/Signup")
+def Signup():
+    return render_template('Signup.html')
+
+@app.route("/Search")
+def Search():
+    return render_template('search.html')
 
 @app.after_request
 def add_header(response):
