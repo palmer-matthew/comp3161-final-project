@@ -1,0 +1,49 @@
+
+{% extends "base.html" %} 
+
+{% block css %} {% endblock %}
+
+{% block title %} 
+<title>Add Recipe</title>
+{% endblock %}
+
+
+
+{% block main %} 
+<p class="recipe_start">Starting to get the hang</p>
+<div class="container">
+<div class="form_container">
+<h1>Add Recipe</h1>
+    <form>
+
+        {{form.add}}<br><br>
+
+        {{form.recipe_name.label}}
+        {{form.recipe_name(size=30)}}<br><br>
+
+        {{form.calorie_count.label}}
+        {{form.calorie_count}}<br><br>
+
+        {{form.serving.label}}
+        {{form.serving}}<br><br>
+
+        {{form.prep_time.label}}
+        {{form.prep_time}}<br><br>
+
+        {{form.image.label}}
+        {{form.image}}<br><br>
+
+        {{form.ingredients.label}}
+        {{form.ingredients}}<br><br>
+
+        {{form.instructions.label}}
+        {{form.instructions}}<br><br>
+
+    </form>
+
+
+</div>
+</div>
+{% endblock %}
+
+{% block js %}{% endblock %}

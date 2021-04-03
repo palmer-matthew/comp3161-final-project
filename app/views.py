@@ -1,10 +1,17 @@
 from app import app
 from flask import render_template, url_for, redirect, flash, request, session
+from .forms import addRecipe
 
 
 @app.route("/")
 def home():
     return render_template('home.html')
+
+
+@app.route("/addrecipe")
+def addrecipe():
+    recipeform = addRecipe()
+    return render_template('addrecipe.html' , form=recipeform)
 
 @app.after_request
 def add_header(response):
