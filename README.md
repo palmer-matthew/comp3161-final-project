@@ -32,3 +32,20 @@ $ source venv/bin/activate (or .\venv\Scripts\activate on Windows)
 $ pip install -r requirements.txt
 $ python run.py
 ```
+
+## Running the Population Script
+
+Remember to update your virtual environment before running the script:
+
+```bash
+$ source venv/bin/activate (or .\venv\Scripts\activate on Windows)
+$ pip install -r requirements.txt
+```
+
+Remeber to start your SQL Server so the script can connect to the database.
+After it has started, you can run the following command:
+
+```bash
+$ python populate.py
+```
+

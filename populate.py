@@ -31,7 +31,7 @@ names = ['Recipe', 'Meal', 'MealPlan', 'User', 'Ingredient', 'Measurement', 'Ins
 lines = [['recipeID int auto_increment', 'creationDate date default CURRENT_DATE', 'recipeName varchar(255)', 'preparationTime int', 'primary key(recipeID)'], \
          ['mealID int auto_increment', 'inputServing int','imageUpload varchar(255)', 'calorieCount int', 'primary key(mealID)'], \
          ['mealPlanID int auto_increment','primary key(mealPlanID)'],\
-         ['userID int auto_increment','fname varchar(50)','lname varchar(50)','password varchar(255)', 'primary key(userID)'],\
+         ['userID int auto_increment','fname varchar(50)','lname varchar(50)','username varchar(150)','password varchar(255)', 'primary key(userID)'],\
          ['ingredientID int auto_increment', 'ingredientName varchar(255)','primary key(ingredientID)'], \
          ['measurementID int auto_increment','quantity varchar(10)','unit varchar(50)','primary key(measurementID)'], \
          ['recipeID int', 'stepNumber int', 'direction varchar(255)', 'primary key(recipeID, stepNumber)', 'foreign key(recipeID) references Recipe(recipeID) on delete cascade'], \
@@ -128,12 +128,12 @@ if __name__ == '__main__':
         #insert 200,000 users
         r.write("/*======================================INSERTING 250,000 USERS======================================*/\r")
 
-        user_stmt = 'INSERT INTO User(fname,lname,password) VALUES("%s", "%s", "%s");\r'
+        user_stmt = 'INSERT INTO User(fname,lname,username,password) VALUES("%s", "%s", "%s", "%s");\r'
         fake = Faker()
         nusers = 20 #Change to 250,000 when it is time to create
         # generate_password_hash(fake.password(length=10, special_chars=False), method='pbkdf2:sha256')
         for i in range(nusers): 
-            r.write(user_stmt % (fake.first_name(), fake.last_name(), fake.password(length=10, special_chars=False)))
+            r.write(user_stmt % (fake.first_name(), fake.last_name(), fake.user_name() ,fake.password(length=10, special_chars=False)))
 
         print("Finished Inserting >200k User INSERT Statements" + "."*10)
 
@@ -147,6 +147,8 @@ if __name__ == '__main__':
         creates_stmt = 'INSERT INTO creates(recipeID, mealID) VALUES(%d, %d);\r'
         contains_stmt = 'INSERT INTO contains(recipeID, ingredientID) VALUES(%d, %d);\r'
         instruct_stmt =  'INSERT INTO Instruction(recipeID, stepNumber, direction) VALUES(%d, %d, "%s");\r'
+        add_stmt =  'INSERT INTO adds(recipeID, userID) VALUES(%d, %d);\r'
+        kitchen_stmt = 'INSERT INTO kitchen(ingredientID, userID) VALUES(%d, %d);\r'
 
         for i in range(num):
             ingredient_list  = []
@@ -171,40 +173,50 @@ if __name__ == '__main__':
 
             r.write(recipe_stmt % (i+1, created_date, recipe_name, preptime))
 
-        for i in range(4):
+        for i in range(6):
             if i == 0:
                 r.write("/*======================================INSERTING Meals======================================*/\r")
     
-
                 for i in recipes:
                     serving = random.randint(1,10)
                     image_name = fake.image_url()
                     calorie = random.randint(1, 7000)
                     r.write(meal_stmt % (i[0], serving, image_name, calorie))
-    
             elif i == 1:
                 r.write("/*======================================INSERTING Relationship: creates======================================*/\r")
     
-
                 for i in recipes:
                     r.write(creates_stmt % (i[0], i[0]))
-    
             elif i == 2:
                 r.write("/*======================================INSERTING Relationship: contains======================================*/\r")
     
-
                 for i in recipes:
                     for j in i[4]:
                         r.write(contains_stmt % (i[0], j[0]))
-    
             elif i == 3:
                 r.write("/*======================================INSERTING Instructions======================================*/\r")
     
-
                 for i in recipes:
                     for j in range(random.randint(1,3)):
-                        direction = fake.paragraph()
+                        direction = fake.paragraph(nb_sentences=2)
                         r.write(instruct_stmt % (i[0], j+1, direction))
+            elif i == 4:
+                r.write("/*======================================INSERTING Relationship: adds======================================*/\r")
+    
+                for i in recipes:
+                    user_id = random.randint(1,nusers)
+                    r.write(add_stmt % (i[0], user_id))
+            elif i == 5:
+                r.write("/*======================================INSERTING Relationship: kitchen======================================*/\r")
+    
+                for i in range(nusers):
+                    ingredient_list  = []
+                    for j in range(random.randint(1,4)):
+                        x = random.choice(ingredients)
+                        if x[0] not in ingredient_list:
+                            ingredient_list.append(x[0])
+                            r.write(kitchen_stmt % (x[0], i+1))
+                        
     
         print("Finished Inserting Recipe INSERT Statements and Connection Statements" + "."*10)
 

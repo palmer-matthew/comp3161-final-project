@@ -1,10 +1,16 @@
+from random import random
+import random
 from app import app
 from flask import render_template, url_for, redirect, flash, request, session
-
+from .function import *
 
 @app.route("/")
 def home():
-    return render_template('home.html')
+    session['log'] = True
+    if session.get('log') == None:
+        return render_template('home.html', log=False)
+    else:
+        return render_template('home.html', log=session.get('log'))
 
 @app.after_request
 def add_header(response):

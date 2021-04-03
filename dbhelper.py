@@ -1,6 +1,7 @@
-from mysql import connector
 import mysql.connector as db
 from mysql.connector import Error
+
+#cursor methods: fetchone() , fetchmany() , and fetchall()
 
 def connect(database=None):
     try:
@@ -27,6 +28,18 @@ def executeNQuery(query, connection):
         print(f'Log: Error {e.msg}')
         return None
     return 'OK'
+
+def executeRQuery(query, connection):
+    try:
+        cursor = None
+        cursor = connection.cursor()
+        cursor.execute(query)
+        results = cursor.fetchall()
+        return results
+    except Error as e:
+        print(f'Log: Error {e.msg}')
+        return None
+
 
 
 
