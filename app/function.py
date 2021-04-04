@@ -25,8 +25,8 @@ def getShoppingList(planid):
         close(conn)
         return None
     else:
-        query = f'SELECT ingredientName, quantity, unit FROM Recipe r JOIN contains c JOIN Ingredient i JOIN Measurement m \
-             ON r.recipeID = c.recipeID AND c.ingredientID = i.ingredientID AND c.measurementID = m.measurementID  WHERE r.recipeID in {tuple(result)};'
+        query = f'SELECT ingredientName FROM Recipe r JOIN contains c JOIN Ingredient i \
+             ON r.recipeID = c.recipeID AND c.ingredientID = i.ingredientID WHERE r.recipeID in {tuple(result)};'
         result = executeRQuery(query, conn)
         print(result, len(result))
         close(conn)

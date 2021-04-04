@@ -37,6 +37,23 @@ def plan_view():
     else:
         return render_template('plan_view.html', log=session.get('log'))
 
+@app.route("/shopping")
+def shopping():
+    session['log'] = True
+    if session.get('log') == None:
+        return render_template('home.html', log=False)
+    else:
+        return render_template('shopping.html', log=session.get('log'))
+
+@app.route("/recipe")
+def recipe():
+    session['log'] = True
+    if session.get('log') == None:
+        return render_template('home.html', log=False)
+    else:
+        return render_template('recipe.html', log=session.get('log'))
+
+
 @app.after_request
 def add_header(response):
     """
