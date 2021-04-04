@@ -7,6 +7,10 @@
 {% block css %}
 {% endblock %}
 
+{% block js %}
+<script src="{{url_for('static', filename='js/profile.js')}}"></script>
+{% endblock %}
+
 
 {% block main %}
 <div class="container">
@@ -64,7 +68,19 @@
     </div>
     <div class="btn-container">
         <h1 class="fw-bold my-5"> Available Ingredients:</h1>
-        <a href="#" class='btn py-2 px-5 bg-btn text-white'>Add</a>
+        <a href="#" class='btn py-2 px-5 bg-btn text-white add'>Add</a>
+    </div>
+    <div class="btn-container hidden active mb-4">
+        <div class="grid gap-20">
+            <select class="form-select" name="ingredient" id="ingredient">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+            <a href="#" class='btn px-2 p-2 bg-header text-white ai center'>Add to Inventory</a>
+        </div>
+        <a href="#" class='btn fs-3 x'>&times;</a>
     </div>
     <div class='mb-5 card-section'>
         <div class="py-2 card grid-card mb-3">
