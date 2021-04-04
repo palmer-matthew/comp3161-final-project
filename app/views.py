@@ -6,11 +6,20 @@ from .function import *
 
 @app.route("/")
 def home():
-    session['log'] = True
+    session.pop('log', None)
     if session.get('log') == None:
         return render_template('home.html', log=False)
     else:
         return render_template('home.html', log=session.get('log'))
+
+
+@app.route("/profile")
+def profile():
+    session['log'] = True
+    if session.get('log') == None:
+        return render_template('home.html', log=False)
+    else:
+        return render_template('profile.html', log=session.get('log'))
 
 @app.after_request
 def add_header(response):

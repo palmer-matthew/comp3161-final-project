@@ -1,4 +1,4 @@
-import random
+import random, os
 from faker import Faker
 from werkzeug.security import generate_password_hash
 from dbhelper import *
