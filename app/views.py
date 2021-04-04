@@ -21,6 +21,22 @@ def profile():
     else:
         return render_template('profile.html', log=session.get('log'))
 
+@app.route("/plan")
+def plan():
+    session['log'] = True
+    if session.get('log') == None:
+        return render_template('home.html', log=False)
+    else:
+        return render_template('generate_plan.html', log=session.get('log'))
+
+@app.route("/planview")
+def plan_view():
+    session['log'] = True
+    if session.get('log') == None:
+        return render_template('home.html', log=False)
+    else:
+        return render_template('plan_view.html', log=session.get('log'))
+
 @app.after_request
 def add_header(response):
     """
