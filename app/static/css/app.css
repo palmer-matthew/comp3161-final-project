@@ -18,6 +18,14 @@ body{
     background-color: #091520;
 }
 
+.bg-btn{
+    background-color: #FFAB5C;
+}
+
+.placeh{
+    background-color: #E1DBDB;
+}
+
 .min{
     min-height: 500px;
     height: 700px;
@@ -49,6 +57,10 @@ body{
     grid-template-columns: 85px auto;
 }
 
+.grid-card:hover{
+    opacity: 0.75;
+}
+
 .btn-container{
     width: 100%;
     display: flex;
@@ -60,5 +72,4 @@ body{
     height: 60px;
     width: 60px;
     margin: auto;
-    background-color: #E1DBDB;
 }
