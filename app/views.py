@@ -4,6 +4,7 @@ from flask import render_template, url_for, redirect, flash, request, session, j
 from werkzeug.security import check_password_hash
 from .function import *
 from .forms import LoginForm, SignUpForm, addRecipe
+from .globals import *
 
 @app.route("/")
 def home():
@@ -22,7 +23,8 @@ def login():
                 return redirect('login')
             elif check_password_hash(result[4], password) == True:
                 session['logged_in'] = True
-                session['userId'] =  result[0]
+                global userid
+                session['userId'], userid =  result[0], result[0]
                 session['username'] = result[3]
                 session['name'] = result[1], result[2]
                 flash('You were logged in', 'success')
@@ -73,41 +75,40 @@ def Search():
 def profile():
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    print(session.get('userId'))
-    result = getIngredientsinKitchen(session.get('userId'))
+    global userid
+    result = getIngredientsinKitchen(userid)
     return render_template('profile.html', log=session.get('logged_in'), name=session.get('name'), uname=session.get('username'), kitchen=result)
 
 @app.route("/plan")
 def plan():
-    if session.get('log') == None:
-        return render_template('home.html', log=False)
-    else:
-        return render_template('generate_plan.html', log=session.get('logged_in'))
+    if session.get('logged_in') == None:
+        return redirect(url_for('home'))
+    return render_template('generate_plan.html', log=session.get('logged_in'))
 
 @app.route("/planview")
 def plan_view():
-    if session.get('log') == None:
-        return render_template('home.html', log=False)
-    else:
-        return render_template('plan_view.html', log=session.get('logged_in'))
+    if session.get('logged_in') == None:
+        return redirect(url_for('home'))
+    return render_template('plan_view.html', log=session.get('logged_in'))
 
 @app.route("/shopping")
 def shopping():
-    if session.get('log') == None:
-        return render_template('home.html', log=False)
-    else:
-        return render_template('shopping.html', log=session.get('logged_in'))
+    if session.get('logged_in') == None:
+        return redirect(url_for('home'))
+    return render_template('shopping.html', log=session.get('logged_in'))
 
 @app.route("/recipe")
 def recipe():
-    if session.get('log') == None:
-        return render_template('home.html', log=False)
-    else:
-        return render_template('recipe.html', log=session.get('logged_in'))
+    if session.get('logged_in') == None:
+        return redirect(url_for('home'))
+    return render_template('recipe.html', log=session.get('logged_in'))
+
 
 #Server API Endpoints
 @app.route("/api/ingredients", methods=['GET'])
 def get_ingredients():
+    if session.get('logged_in') == None:
+        return jsonify({'data': 'NOK'})
     result = getIngredients()
     if result == None:
         return jsonify({ 'data' : 'NOK'})
@@ -116,11 +117,31 @@ def get_ingredients():
 
 @app.route("/api/inventory", methods=['POST'])
 def inventory():
+    if session.get('logged_in') == None:
+        return jsonify({'data': 'NOK'})
     if request.method == 'POST':
-        result = addToInventory(session.get('userId'), request.form['iID'])
+        result = addToInventory(userid, request.form['iID'])
         if result == 'OK':
             return jsonify({'data': 'OK'})
     return jsonify({'data': 'NOK'})
+
+@app.route("/api/plan", methods=['POST'])
+def create_plan():
+    if session.get('logged_in') == None:
+        return jsonify({'data': 'NOK'})
+    if request.method == 'POST':
+        if request.form.get('calorie') == 'NONE':
+            result = createMealPlan()
+        else:
+            result = createMealPlan(request.form.get('calorie'))
+        if result == None:
+            return jsonify({'data': 'NOK'})
+        else:
+            global current_meal_plan, current_total
+            current_meal_plan, current_total = result[0], result[1]
+            return jsonify({ 'data': result[0], 'total': result[1]})
+    return jsonify({'data': 'NOK'})
+
 
 @app.after_request
 def add_header(response):

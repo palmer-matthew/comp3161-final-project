@@ -203,7 +203,7 @@ if __name__ == '__main__':
                     ingredient_list.append(x)
             serving = random.randint(1,10)
             image_name = fake.image_url()
-            calorie = random.randint(200, 9000)
+            calorie = random.randint(200, 1000)
             r.write(recipe_stmt % (i+1, created_date, recipe_name, preptime, serving, image_name, calorie))
             recipes.append((i+1, ingredient_list))
 
