@@ -23,10 +23,10 @@
   
         <div class="text-end">
           {% if log == True %}
-            <a type="button" class="btn btn-outline-light me-2" href="#">Logout</a>
+            <a type="button" class="btn btn-outline-light me-2" href="{{ url_for('logout') }}">Logout</a>
           {% else %}
             <a type="button" class="btn btn-outline-light me-2" href="{{ (url_for('login')) }}" >Login</a>
-            <a type="button" class="btn btn-warning" href="{{ (url_for('Signup')) }}">Sign-up</a>
+            <a type="button" class="btn btn-warning" href="{{ (url_for('signup')) }}">Sign-up</a>
           {% endif %}
         </div>
       </div>

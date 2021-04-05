@@ -14,12 +14,13 @@
 
 {% block main %}
 <div class="container">
+    {% include 'flashmssgs.html' %}
     <div class="mt-5 py-4 card grid-profile">
         <div class="profile"></div>
         <div class='pbody'>
-            <p>Username: username</p>
-            <p>First Name: John</p>
-            <p>Last Name: Billows</p>
+            <p>Username: {{ uname }}</p>
+            <p>First Name: {{ name[0] }}</p>
+            <p>Last Name: {{ name[1] }}</p>
         </div>
     </div>
     <h1 class="fw-bold my-5"> Created Recipes:</h1>

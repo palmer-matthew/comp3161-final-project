@@ -1,5 +1,6 @@
 import random
 from dbhelper import *
+from werkzeug.security import generate_password_hash
 
 # - users should be able to regenerate this meal plan at any time.
 
@@ -64,27 +65,41 @@ def getShoppingList1(planid):
         close(conn)
         return [i[0] for i in result]
 
-def addUser():
-    conn = connect(database= "planner")
-    query = 'INSERT INTO User;'
-    result = executeRQuery(query, conn)
+def addUser(username, password, fname, lname):
+    conn = connect(database= 'planner')
+    query = 'INSERT INTO User(fname,lname,username, user_password) VALUES("%s", "%s", "%s", "%s");\r'
+    hash = generate_password_hash(password, method='pbkdf2:sha256')
+    result = executeNQuery(query % (fname,lname, username, hash), conn)
     if result == None or result == [] :
         close(conn)
         return None
     else:
         close(conn)
-        return None 
+        return 'OK'
 
-def getUser(username):
+def checkUser(username):
     conn = connect(database= "planner")
     query = 'SELECT DISTINCT userID FROM User WHERE username = "%s";'
-    result = [i[0] for i in executeRQuery(query % (username), conn )]
+    result = executeRQuery(query % (username), conn)
     if result == None or result == []:
         close(conn)
         return None
     else:
         close(conn)
-        return None 
+        result = [i[0] for i in result]
+        return result 
+
+def getUser(username):
+    conn = connect(database= "planner")
+    query = 'SELECT DISTINCT * FROM User WHERE username = "%s";'
+    result = executeRQuery(query % (username), conn)
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        result = result[0]
+        return result 
 
 def SearchRecipe(recipeName):
     conn = connect(database= "planner")

@@ -1,53 +1,61 @@
 import random
 from app import app
 from flask import render_template, url_for, redirect, flash, request, session, jsonify
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
 from .function import *
-
-#Global Values
-userid = 1
+from .forms import LoginForm, SignUpForm
 
 @app.route("/")
 def home():
-    session.pop('log', None) 
-    if session.get('log') == None:
-        return render_template('home.html', log=False)
-    else:
-        return render_template('home.html', log=session.get('log'))
-
+    return render_template('home.html', log=session.get('log'))
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
-    error = None
+    iform = LoginForm()
     if request.method == 'POST':
-        if request.form['username'] != app.config['ADMIN_USERNAME'] or request.form['password'] != app.config['ADMIN_PASSWORD']:
-            error = 'Invalid username or password'
-        else:
-            session['logged_in'] = True
+        if iform.validate_on_submit():
+            username = request.form['username']
+            password = request.form['password']
+            result = getUser(username)
+            if result == None:
+                flash('Sorry Data Could not be Found on', 'danger')
+                return redirect('login')
+            elif check_password_hash(result[4], password) == True:
+                session['logged_in'] = True
+                session['userId'] =  result[0]
+                session['username'] = result[3]
+                session['name'] = result[1], result[2]
+                flash('You were logged in', 'success')
+                return redirect(url_for('profile'))
+        flash_errors(iform)
+    return render_template('login.html', form=iform)
+
+
+@app.route("/signup", methods=['POST', 'GET'])
+def signup():
+    sform = SignUpForm()
+    if request.method == 'POST':
+        if sform.validate_on_submit():
+            username = request.form['username']
+            password = request.form['password']
+            fname = request.form['fname']
+            lname = request.form['lname']
             
-            flash('You were logged in', 'success')
-            return redirect(url_for('home')) 
-    return render_template('login.html', error=error)
+            result = checkUser(username) 
+            if result == None:
+                result = addUser(username, password, fname, lname)
+                if result == 'OK':
+                    flash('Successfully Created Account', 'success')
+                    return redirect(url_for('login'))
+        flash_errors(sform) 
+    return render_template('signup.html', form=sform) 
 
-
-@app.route("/Signup")
-def Signup():
-    return render_template('Signup.html') #error=error)
-
-@app.route('/Signup', methods=['POST'])
-def signup_post():
-    username = request.form['uname']
-    password = request.form['psw']
-    fname = request.form['fname']
-    lname = request.form['lname']
-    
-    if getUser(username): 
-        return redirect(url_for('signup'))
-
-    if addUser():
-        new_user = username(userN= username, fname= fname, lname=lname, password=generate_password_hash(password, method='sha256'))
-
-    return redirect(url_for('login'))
+@app.route('/logout')
+def logout():
+    session.pop('name', None)
+    session.pop('username', None)
+    session.pop('logged_in', None)
+    return redirect(url_for('home'))
     
 @app.route("/Search")
 def Search():
@@ -57,45 +65,39 @@ def Search():
 
 @app.route("/profile")
 def profile():
-    session['log'] = True
-    if session.get('log') == None:
-        return render_template('home.html', log=False)
-    else:
-        result = getIngredientsinKitchen(userid)
-        return render_template('profile.html', log=session.get('log'), kitchen=result)
+    if session.get('logged_in') == None:
+        return redirect(url_for('home'))
+    print(session.get('userId'))
+    result = getIngredientsinKitchen(session.get('userId'))
+    return render_template('profile.html', log=session.get('logged_in'), name=session.get('name'), uname=session.get('username'), kitchen=result)
 
 @app.route("/plan")
 def plan():
-    session['log'] = True
     if session.get('log') == None:
         return render_template('home.html', log=False)
     else:
-        return render_template('generate_plan.html', log=session.get('log'))
+        return render_template('generate_plan.html', log=session.get('logged_in'))
 
 @app.route("/planview")
 def plan_view():
-    session['log'] = True
     if session.get('log') == None:
         return render_template('home.html', log=False)
     else:
-        return render_template('plan_view.html', log=session.get('log'))
+        return render_template('plan_view.html', log=session.get('logged_in'))
 
 @app.route("/shopping")
 def shopping():
-    session['log'] = True
     if session.get('log') == None:
         return render_template('home.html', log=False)
     else:
-        return render_template('shopping.html', log=session.get('log'))
+        return render_template('shopping.html', log=session.get('logged_in'))
 
 @app.route("/recipe")
 def recipe():
-    session['log'] = True
     if session.get('log') == None:
         return render_template('home.html', log=False)
     else:
-        return render_template('recipe.html', log=session.get('log'))
-
+        return render_template('recipe.html', log=session.get('logged_in'))
 
 #Server API Endpoints
 @app.route("/api/ingredients", methods=['GET'])
@@ -109,7 +111,7 @@ def get_ingredients():
 @app.route("/api/inventory", methods=['POST'])
 def inventory():
     if request.method == 'POST':
-        result = addToInventory(userid, request.form['iID'])
+        result = addToInventory(session.get('userId'), request.form['iID'])
         if result == 'OK':
             return jsonify({'data': 'OK'})
     return jsonify({'data': 'NOK'})
