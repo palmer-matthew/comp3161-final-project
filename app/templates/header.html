@@ -1,6 +1,7 @@
 <nav class="p-3 bg-header mb-3 text-white">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"> 
+        
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
           <li><a href="{{url_for('home')}}" class="nav-link px-2 text-white">Home</a></li>
           {% if log == True %}
@@ -24,8 +25,8 @@
           {% if log == True %}
             <a type="button" class="btn btn-outline-light me-2" href="#">Logout</a>
           {% else %}
-            <a type="button" class="btn btn-outline-light me-2" href="#" >Login</a>
-            <a type="button" class="btn btn-warning" href="#">Sign-up</a>
+            <a type="button" class="btn btn-outline-light me-2" href="{{ (url_for('login')) }}" >Login</a>
+            <a type="button" class="btn btn-warning" href="{{ (url_for('Signup')) }}">Sign-up</a>
           {% endif %}
         </div>
       </div>

@@ -63,3 +63,49 @@ def getShoppingList1(planid):
     else:
         close(conn)
         return [i[0] for i in result]
+
+def addUser():
+    conn = connect(database= "planner")
+    query = 'INSERT INTO User;'
+    result = executeRQuery(query, conn)
+    if result == None or result == [] :
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return None 
+
+def getUser(username):
+    conn = connect(database= "planner")
+    query = 'SELECT DISTINCT userID FROM User WHERE username = "%s";'
+    result = [i[0] for i in executeRQuery(query % (username), conn )]
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return None 
+
+def SearchRecipe(recipeName):
+    conn = connect(database= "planner")
+    query = 'SELECT * FROM Recipe WHERE recipeID = search;'
+    result = None
+    recipes = query.fetchall()
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return None 
+
+def SearchMealPlan(planName):
+    conn = connect(database= "planner")
+    query = 'SELECT * FROM mealPLan WHERE mealPlanID = search;'
+    result = None
+    recipes = query.fetchall()
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return None 

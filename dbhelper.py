@@ -8,7 +8,7 @@ def connect(database=None):
     try:
         conn = None
         if database == None:
-            conn = db.connect(host='localhost', user='root', password='')
+            conn = db.connect(host='localhost', user='imani', password= '')
         else:
             conn = db.connect(host='localhost', database='planner', user='root', password='')
     except Error as e:
