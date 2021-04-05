@@ -1,12 +1,16 @@
-
+from random import random
+import random
 from app import app
-
-from flask import render_template, url_for, redirect, flash, request, session, abort
-
+from flask import render_template, url_for, redirect, flash, request, session
+from .function import *
 
 @app.route("/")
 def home():
-    return render_template('home.html')
+    session.pop('log', None) 
+    if session.get('log') == None:
+        return render_template('home.html', log=False)
+    else:
+        return render_template('home.html', log=session.get('log'))
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
@@ -17,18 +21,37 @@ def login():
         else:
             session['logged_in'] = True
             
-        '''    flash('You were logged in', 'success')
-            return redirect(url_for('upload')) '''
+            flash('You were logged in', 'success')
+            return redirect(url_for('home')) 
     return render_template('login.html', error=error)
 
 
 @app.route("/Signup")
 def Signup():
-    return render_template('Signup.html')
+    return render_template('Signup.html', error=error)
+
+@app.route('/Signup', methods=['POST'])
+def signup_post():
+    username = request.form['uname']
+    password = request.form['psw']
+    fname = request.form['fname']
+    lname = request.form['lname']
+    
+    if getUser(username): 
+        return redirect(url_for('signup'))
+
+    if addUser():
+        new_user = username(userN= username, fname= fname, lname=lname, password=generate_password_hash(password, method='sha256'))
+
+    return redirect(url_for('login'))
+    
+
 
 @app.route("/Search")
 def Search():
-    return render_template('search.html')
+    search = request.form['search']
+    if SearchRecipe(search) | SearchMealPlan(search):
+        return render_template('search.html')
 
 @app.after_request
 def add_header(response):
