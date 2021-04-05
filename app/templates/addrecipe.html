@@ -1,7 +1,10 @@
 
 {% extends "base.html" %} 
 
-{% block css %} {% endblock %}
+{% block css %}
+    <link href="/static/css/addrecipe.css" rel="stylesheet"> 
+    <!-- <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet"> -->
+{% endblock %}
 
 {% block title %} 
 <title>Add Recipe</title>
@@ -10,39 +13,53 @@
 
 
 {% block main %} 
-<p class="recipe_start">Starting to get the hang</p>
-<div class="container">
-<div class="form_container">
-<h1>Add Recipe</h1>
-    <form>
+<div class="add_container">
+    <h1>Add Recipe</h1>
+    <div class="add_btn">
+        <form>{{form.add}}<br></form>
+    </div>
+    
+    <div class="form_container">
+        <!-- <h1>Add Recipe</h1>
 
-        {{form.add}}<br><br>
+            <form>{{form.add}}<br><br></form> -->
+            <form>
 
-        {{form.recipe_name.label}}
-        {{form.recipe_name(size=30)}}<br><br>
+            <div class="">   
+                {{form.recipe_name.label}}<br>
+                {{form.recipe_name(size=30)}}
+            </div>
 
-        {{form.calorie_count.label}}
-        {{form.calorie_count}}<br><br>
+            <div>
+                {{form.calorie_count.label}}<br>
+                {{form.calorie_count}}
+            </div>
+                
 
-        {{form.serving.label}}
-        {{form.serving}}<br><br>
+            <div>
+                {{form.serving.label}}<br>
+                {{form.serving}}
+            </div>
 
-        {{form.prep_time.label}}
-        {{form.prep_time}}<br><br>
+            <div>
+                {{form.prep_time.label}}<br>
+                {{form.prep_time}}
+            </div>
+                
 
-        {{form.image.label}}
-        {{form.image}}<br><br>
+            <div>
+                {{form.image.label}}
+                {{form.image}}<br><br>
+            </div>
 
-        {{form.ingredients.label}}
-        {{form.ingredients}}<br><br>
+                {{form.ingredients.label}}
+                {{form.ingredients}}<br><br>
 
-        {{form.instructions.label}}
-        {{form.instructions}}<br><br>
+                {{form.instructions.label}}
+                {{form.instructions}}<br><br>
 
-    </form>
-
-
-</div>
+            </form>
+    </div>
 </div>
 {% endblock %}
 

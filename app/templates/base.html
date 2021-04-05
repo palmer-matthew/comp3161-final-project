@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {% block title %}{% endblock %}
     <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+    <link href="{{url_for('static', filename='css/app.css')}}" rel="stylesheet">
     {% block css %}{% endblock %} 
   </head>
   <body>
     <header> {% include 'header.html'%}</header>
-    <div class="container">
-      <main>{% block main %}{% endblock %}</main>
-    </div>
+    <main>{% block main %}{% endblock %}</main>
     <footer>{% include 'footer.html'%}</footer>
   </body>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
