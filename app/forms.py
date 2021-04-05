@@ -13,22 +13,18 @@ class SignUpForm(FlaskForm):
     lname = StringField('Last Name', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
 
+class SearchForm(FlaskForm):
+    search = StringField('Search', validators=[DataRequired()])
+
 class addRecipe(FlaskForm):
     
-    recipe_name = StringField('Recipe Name', validators=[DataRequired()])
-    
+    recipe_name = StringField('Recipe Name', validators=[DataRequired()])   
     calorie_count = IntegerField('Calorie Count', validators=[DataRequired()])
-    
     serving = IntegerField('Serving', validators=[DataRequired()])
-    
     prep_time = IntegerField('Prep Time', validators=[DataRequired()])
-    
     image = FileField('Photo Upload', validators= [FileRequired(), FileAllowed(['jpg','png','Images only!'])])
     
-    ingredients = SelectMultipleField(u'Ingredients', validators=[DataRequired()], choices=[('cpp', 'Carrots'), ('py', 'Plums'), ('text', 'Something Else')])
-
+    # ingredients = SelectMultipleField(u'Ingredients', validators=[DataRequired()], choices=[('cpp', 'Carrots'), ('py', 'Plums'), ('text', 'Something Else')])
     # ingredients = SelectMultipleField('Ingredients', choices=[('crr', Carrot), ('lt', 'Lettuce), ('or', 'Orange'), ('pl', 'plums)] )
-    
-    instructions = StringField('Instructions', validators=[DataRequired()])
-    
-    add = SubmitField('Add')
+    # instructions = StringField('Instructions', validators=[DataRequired()])
+    # add = SubmitField('Add')

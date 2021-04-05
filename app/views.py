@@ -2,8 +2,9 @@ import random
 from app import app
 from flask import render_template, url_for, redirect, flash, request, session, jsonify
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 from .function import *
-from .forms import LoginForm, SignUpForm, addRecipe
+from .forms import LoginForm, SignUpForm, addRecipe, SearchForm
 from .globals import *
 
 @app.route("/")
@@ -61,6 +62,8 @@ def logout():
 
 @app.route("/addrecipe", methods=['POST', 'GET'])
 def addrecipe():
+    if session.get('logged_in') == None:
+        return redirect(url_for('home'))
     recipeform = addRecipe()
     if request.method == 'POST':
         if recipeform.validate_on_submit():
@@ -68,19 +71,32 @@ def addrecipe():
             calorieCount = request.form['calorie_count']
             inputServing = request.form['serving']
             preparationTime = request.form['prep_time']
-            imageUpload = request.form['image']
-        
-            result = addNewRecipe(recipeName, preparationTime, inputServing, imageUpload, calorieCount)
-        
-        # ingredients = request.form['ingredients']
-        # instructions = request.form['instructions']
-    return render_template('addrecipe.html' , form=recipeform)
 
-@app.route("/Search")
-def Search():
-    search = request.form['search']
-    if SearchRecipe(search) | SearchMealPlan(search):
-        return render_template('search.html')
+            imageUpload = request.files['image']
+            filename = secure_filename(imageUpload.filename)
+            imageUpload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
+            # flash('Recipe Successful Uploaded', 'success')
+        flash_errors(recipeform)
+    return render_template('addrecipe.html' ,log=session.get('logged_in'), form=recipeform)
+
+
+@app.route("/search", methods=['GET', 'POST'])
+def search():
+    if session.get('logged_in') == None:
+        return redirect(url_for('home'))
+    searchF = SearchForm()
+    # if request.form['matchRecipe']|request.form['matchMealPLan']:
+    #     if searchF.validate_on_submit():
+    #         recipes = request.form['search']
+    #         result = SearchRecipe(recipes)
+    #     if result == None:
+    #         flash('Search not found')
+    #         if result == 'OK':
+    #             return render_template('search.html', form=searchF, result=result)
+    #     flash_errors(searchF)
+    return render_template('search.html', form=searchF)
 
 @app.route("/profile")
 def profile():
@@ -121,6 +137,16 @@ def get_ingredients():
     if session.get('logged_in') == None:
         return jsonify({'data': 'NOK'})
     result = getIngredients()
+    if result == None:
+        return jsonify({ 'data' : 'NOK'})
+    else:
+        return jsonify({ 'data' : result})
+
+@app.route("/api/measurements", methods=['GET'])
+def get_measurement():
+    if session.get('logged_in') == None:
+        return jsonify({'data': 'NOK'})
+    result = getMeasurements()
     if result == None:
         return jsonify({ 'data' : 'NOK'})
     else:

@@ -94,6 +94,11 @@ a{
     grid-template-columns: repeat(2, 1fr)
 }
 
+.grid-3{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr)
+}
+
 .grid-card:hover{
     opacity: 0.75;
 }
@@ -141,4 +146,9 @@ a{
 .inine{
     width: 50%;
     display: inline;
+}
+
+.center-lr{
+    margin-left: auto;
+    margin-right: auto;
 }

@@ -5,8 +5,6 @@ class Config(object):
     DEBUG = False
     SECRET_KEY = os.urandom(24)
     UPLOAD_FOLDER = './uploads'
-    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'admin' or ''
-    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') or 'Password123' or ''
 
 
 class DevelopmentConfig(Config):

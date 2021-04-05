@@ -2,8 +2,8 @@
 {% extends "base.html" %} 
 
 {% block css %}
-    <link href="/static/css/addrecipe.css" rel="stylesheet"> 
-    <!-- <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="/static/css/addrecipe.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/loginjs.css"> 
 {% endblock %}
 
 {% block title %} 
@@ -13,61 +13,57 @@
 
 
 {% block main %}
-<div>
-    <!-- <p></p>  Success Message -->
-</div>
-<div class="add_container">
-    <h1>Add Recipe</h1>
-    <div class="add_btn">
-        <!-- <form>{{form.add}}<br></form> -->
-        <a href="#" class='btn py-2 px-5 bg-btn text-white add'>Add</a>
+<h1 class="mt-5 fw-bold text-center">Add Recipe</h1>
+{% include 'flashmssgs.html' %}
+<div class="container modal-content animate bg-form py-5 center my-5">
+    <div>
+        <!-- <p></p>  Success Message -->
     </div>
-    
-    <div class="form_container">
-
-        <form>
-
-            <div class="rec_name">   
-                {{form.recipe_name.label}}<br>
-                {{form.recipe_name}}<br><br>
+    <form action="{{ url_for('addrecipe') }}" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token}}
+        <div class="grid">
+            <div class="form-group d-flex flex-column">   
+                {{form.recipe_name.label(class="center fw-bold fs-5")}}
+                {{form.recipe_name}}
             </div>
-
-            <div class="cal_count">
-                {{form.calorie_count.label}}<br>
-                {{form.calorie_count}}<br><br>
+            <div class="form-group d-flex flex-column">
+                {{form.calorie_count.label(class="center fw-bold fs-5")}}
+                {{form.calorie_count}}
             </div>
-                
-
-            <div class="serv">
-                {{form.serving.label}}<br>
-                {{form.serving}}<br><br>
+        </div>
+        <div class="grid mt-4">
+            <div class="form-group d-flex flex-column">   
+                {{form.serving.label(class="center fw-bold fs-5")}}
+                {{form.serving}}
             </div>
-
-            <div class="prep_t">
-                {{form.prep_time.label}}<br>
-                {{form.prep_time}}<br><br>
+            <div class="form-group d-flex flex-column">
+                {{form.prep_time.label(class="center fw-bold fs-5")}}
+                {{form.prep_time(placeholder="Time in minutes")}}
             </div>
-                
-
-            <div class="browse_image">
-                {{form.image.label}}
-                {{form.image}}<br><br>
+        </div>
+        <div class="form-group mt-5 ms-5">
+            {{form.image.label(class="me-4 fw-bold fs-5")}}
+            {{form.image}}
+        </div>
+        <div class="mt-5 px-3">
+            <div class="grid-3 gap-20">
+                <select class="form-select" name="ingredient" id="ingredient">
+                </select>
+                <select class="form-select" name="measurememt" id="measurement">
+                </select>
+                <a href="#" class='btn px-2 p-2 bg-header text-white ai center'>Add Ingredient</a>
             </div>
-
-            <div class="ingredients">
-                {{form.ingredients.label}}<br>
-                {{form.ingredients}}<br><br>
-            </div>
-                
-
-            <div class="instructions">
-                {{form.instructions.label}}<br>
-                {{form.instructions}}<br><br>
-            </div>
-                
-
-        </form>
-    </div>
+        </div>
+        <table class="sel-ing">
+        </table>
+        <div class="mt-5 m-1 btn-container">
+            <input class="center" type="text" name="instruction" id="instruction" placeholder="e.g Stir for 2 mins">
+            <a href="#" class='btn px-2 p-2 bg-header text-white instruct center'>Add Instruction</a>
+        </div>
+        <table class="sel-ins">
+        </table>
+        <button class="btn bg-btn text-white fs-5 mt-4 center-lr add" type="submit">Add Recipe</button> 
+    </form>
 </div>
 {% endblock %}
 

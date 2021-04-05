@@ -60,6 +60,20 @@ def getIngredients():
             rslt.append({'key': i[0], 'name': i[1]})
         return rslt
 
+def getMeasurements():
+    conn = connect(database='planner')
+    query = 'SELECT * FROM Measurement i ORDER BY unit;'
+    result = executeRQuery(query, conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        rslt = []
+        for i in result:
+            rslt.append({'key': i[0], 'qty': float(i[1]), 'unit': i[2]})
+        return rslt
+
 """
 GRANT ALL PRIVILEGES ON world.* TO 'lab5_user'@'localhost'
 IDENTIFIED BY 'password123';
@@ -113,11 +127,14 @@ def getUser(username):
         result = result[0]
         return result 
 
-def SearchRecipe(recipeName):
+
+def SearchRecipe(search):
     conn = connect(database= "planner")
-    query = 'SELECT * FROM Recipe WHERE recipeID = search;'
+    query = 'SELECT DISTINCT * FROM Recipe WHERE recipeName LIKE "%s" LIMIT 500;'
     result = None
-    recipes = query.fetchall()
+    recipes = executeRQuery(query % (search), conn)
+    for res in result:
+        print(res)
     if result == None or result == []:
         close(conn)
         return None
@@ -125,11 +142,13 @@ def SearchRecipe(recipeName):
         close(conn)
         return None 
 
-def SearchMealPlan(planName):
+def SearchMealPlan(search):
     conn = connect(database= "planner")
-    query = 'SELECT * FROM mealPLan WHERE mealPlanID = search;'
+    query = 'SELECT DISTINCT * FROM mealPLan WHERE planName LIKE "%s" LIMIT 500;'
     result = None
-    recipes = query.fetchall()
+    recipes = executeRQuery(query % (search), conn)
+    for res in result:
+        print(res)
     if result == None or result == []:
         close(conn)
         return None
@@ -137,17 +156,7 @@ def SearchMealPlan(planName):
         close(conn)
         return None
 
-def SearchMealPlan(planName):
-    conn = connect(database= "planner")
-    query = 'SELECT * FROM mealPLan WHERE mealPlanID = search;'
-    result = None
-    recipes = query.fetchall()
-    if result == None or result == []:
-        close(conn)
-        return None
-    else:
-        close(conn)
-        return None 
+
 
 def createMealPlan(calorieCount=None):
     conn = connect(database='planner')
