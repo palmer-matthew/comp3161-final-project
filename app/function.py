@@ -1,40 +1,133 @@
 import random
 from dbhelper import *
+from werkzeug.security import generate_password_hash
 
-# - Generate a supermarket list based on the planned meals
 # - users should be able to regenerate this meal plan at any time.
 
-def getIngredientsinKitchen(userid):
+def addToInventory(userid , iID):
     conn = connect(database='planner')
-    query = 'SELECT DISTINCT ingredientName FROM Ingredient i JOIN kitchen k ON i.ingredientID = k.ingredientID \
-             WHERE userID = %d;'
+    result = getIngredientsinKitchen(userid, string=False)
+    if result == None:
+        return result
+    elif int(iID) not in result:
+        query = 'INSERT INTO kitchen(ingredientID, userID) VALUES(%d, %d);\r'
+        result = executeNQuery(query % (int(iID), userid), conn)
+        if result == None or result == []:
+            close(conn)
+            return None
+        else:
+            close(conn)
+            return 'OK'
+    else:
+        return 'NOK'
+        
+
+def addNewRecipe():
+    conn = connect(database='planner')
+    query = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%d","%d","%s","%d","%d","%s","%d")'
+    executeNQuery(query, conn)
+    close(conn)
+
+    
+def getIngredientsinKitchen(userid, string=True):
+    conn = connect(database='planner')
+    if string==True:
+        query = 'call GetKitchen(%d);'
+    else:
+        query = 'call GetIntKitchen(%d);'
     result = executeRQuery(query % (userid), conn)
     if result == None or result == []:
         close(conn)
         return None
     else:
         close(conn)
-        return [i[0].upper() for i in result]
+        return [i[0] for i in result]
 
-def getShoppingList(planid):
+def getIngredients():
     conn = connect(database='planner')
-    query = 'SELECT DISTINCT recipeID FROM MealPlan m JOIN includes i ON m.mealPlanID = i.mealPlanID \
-             WHERE m.mealPlanID = %d;'
-    result = [i[0] for i in executeRQuery(query % (planid), conn)]
+    query = 'SELECT * FROM Ingredient i ORDER BY ingredientName;'
+    result = executeRQuery(query, conn)
     if result == None or result == []:
         close(conn)
         return None
     else:
-        query = f'SELECT ingredientName, quantity, unit FROM Recipe r JOIN contains c JOIN Ingredient i JOIN Measurement m \
-             ON r.recipeID = c.recipeID AND c.ingredientID = i.ingredientID AND c.measurementID = m.measurementID  WHERE r.recipeID in {tuple(result)};'
-        result = executeRQuery(query, conn)
-        print(result, len(result))
         close(conn)
-        # return [i[0] for i in result]
+        rslt = []
+        for i in result:
+            rslt.append({'key': i[0], 'name': i[1]})
+        return rslt
 
-def addNewRecipe():
+"""
+GRANT ALL PRIVILEGES ON world.* TO 'lab5_user'@'localhost'
+IDENTIFIED BY 'password123';
+"""
+def getShoppingList1(planid):
     conn = connect(database='planner')
-    query = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%d","%d","%s","%d","%d","%s","%d")'
-    executeNQuery(query, conn)
-    
-    close(conn)
+    query = 'call GetShoppingList(%d);'
+    result = executeRQuery(query % (planid), conn)
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return [i[0] for i in result]
+
+def addUser(username, password, fname, lname):
+    conn = connect(database= 'planner')
+    query = 'INSERT INTO User(fname,lname,username, user_password) VALUES("%s", "%s", "%s", "%s");\r'
+    hash = generate_password_hash(password, method='pbkdf2:sha256')
+    result = executeNQuery(query % (fname,lname, username, hash), conn)
+    if result == None or result == [] :
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return 'OK'
+
+def checkUser(username):
+    conn = connect(database= "planner")
+    query = 'SELECT DISTINCT userID FROM User WHERE username = "%s";'
+    result = executeRQuery(query % (username), conn)
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        result = [i[0] for i in result]
+        return result 
+
+def getUser(username):
+    conn = connect(database= "planner")
+    query = 'SELECT DISTINCT * FROM User WHERE username = "%s";'
+    result = executeRQuery(query % (username), conn)
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        result = result[0]
+        return result 
+
+def SearchRecipe(recipeName):
+    conn = connect(database= "planner")
+    query = 'SELECT * FROM Recipe WHERE recipeID = search;'
+    result = None
+    recipes = query.fetchall()
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return None 
+
+def SearchMealPlan(planName):
+    conn = connect(database= "planner")
+    query = 'SELECT * FROM mealPLan WHERE mealPlanID = search;'
+    result = None
+    recipes = query.fetchall()
+    if result == None or result == []:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        return None 

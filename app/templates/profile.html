@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Project Profile</title>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block js %}
+<script src="{{url_for('static', filename='js/profile.js')}}"></script>
+{% endblock %}
+
+
+{% block main %}
+<div class="container">
+    {% include 'flashmssgs.html' %}
+    <div class="mt-5 py-4 card grid-profile">
+        <div class="profile"></div>
+        <div class='pbody'>
+            <p>Username: {{ uname }}</p>
+            <p>First Name: {{ name[0] }}</p>
+            <p>Last Name: {{ name[1] }}</p>
+        </div>
+    </div>
+    <h1 class="fw-bold my-5"> Created Recipes:</h1>
+    <div class='card-section'>
+        <a href="{{ url_for('recipe')}}"><div class="py-2 card grid-card mb-3">
+            <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
+            <div class="btn-container">
+                <div>
+                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
+                    <p class="fs-6 fw-light nbm">Servings: 6</p>
+                </div>
+                <p class="nbm me-4">Created: 2020-03-12</p>
+            </div>
+        </div></a>
+        <div class="py-2 card grid-card mb-3">
+            <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
+            <div class="btn-container">
+                <div>
+                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
+                    <p class="fs-6 fw-light nbm">Servings: 6</p>
+                </div>
+                <p class="nbm me-4">Created: 2020-03-12</p>
+            </div>
+        </div>
+    </div>
+    <h1 class="fw-bold my-5"> Created Meal Plans:</h1>
+    <div class='card-section'>
+        <a href="{{ url_for('plan_view')}}"><div class="py-3 card grid-card mb-3">
+            <img class='image' src="{{ url_for('static', filename='img/menu_book_black_24dp.svg')}}" alt="">
+            <div class="btn-container">
+                <div>
+                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Meal Plan</p>
+                </div>
+                <p class="nbm me-4">Created: 2020-03-12</p>
+            </div>
+        </div></a>
+        <div class="py-3 card grid-card mb-3">
+            <img class='image' src="{{ url_for('static', filename='img/menu_book_black_24dp.svg')}}" alt="">
+            <div class="btn-container">
+                <div>
+                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Meal Plan</p>
+                </div>
+                <p class="nbm me-4">Created: 2020-03-12</p>
+            </div>
+        </div>
+    </div>
+    <div class="btn-container">
+        <h1 class="fw-bold my-5"> Whats In Your Kitchen:</h1>
+        <a href="#" class='btn py-2 px-5 bg-btn text-white add'>Add</a>
+    </div>
+    <div class="btn-container hidden mb-4">
+        <div class="grid gap-20">
+            <select class="form-select" name="ingredient" id="ingredient">
+            </select>
+            <a href="#" class='btn px-2 p-2 bg-header text-white ai center'>Add to Inventory</a>
+        </div>
+        <a href="#" class='btn fs-3 x'>&times;</a>
+    </div>
+    <div class='mb-5 card-section'>
+        {% if kitchen == None or kitchen == []%}
+            <div class="card">
+                <p class="center text-capitalize fw-bold fs-5 nbm">NO AVAILABLE INGREDIENTS</p>
+            </div>
+        {% else %}
+            {% for i in kitchen %}
+                <div class="py-2 card grid-card mb-3">
+                    <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
+                    <div class="btn-container">
+                        <div>
+                            <p class="text-capitalize fw-bold fs-5 nbm">{{ i.upper() }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+    </div>
+</div>
+{% endblock %}
