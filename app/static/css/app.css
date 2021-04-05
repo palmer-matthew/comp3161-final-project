@@ -54,6 +54,10 @@ a{
     background-color: #E1DBDB;
 }
 
+.bg-form{
+    background-color: #fff;
+}
+
 .min{
     min-height: 500px;
     height: 700px;

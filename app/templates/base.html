@@ -15,7 +15,11 @@
     {% block css %}{% endblock %} 
   </head>
   <body>
-    <header> {% include 'header.html'%}</header>
+    <header> 
+      {% include 'header.html'%}
+    </header>
+    <div class="container"></div>
+  
     <main>{% block main %}{% endblock %}</main>
     <footer>{% include 'footer.html'%}</footer>
   </body>
