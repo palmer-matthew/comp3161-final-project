@@ -12,7 +12,10 @@
 
 
 
-{% block main %} 
+{% block main %}
+<div>
+    <!-- <p></p>  Success Message -->
+</div>
 <div class="add_container">
     <h1>Add Recipe</h1>
     <div class="add_btn">
@@ -53,13 +56,13 @@
             </div>
 
             <div class="ingredients">
-                {{form.ingredients.label}}
+                {{form.ingredients.label}}<br>
                 {{form.ingredients}}<br><br>
             </div>
                 
 
-            <div>
-                {{form.instructions.label}}
+            <div class="instructions">
+                {{form.instructions.label}}<br>
                 {{form.instructions}}<br><br>
             </div>
                 
@@ -69,4 +72,6 @@
 </div>
 {% endblock %}
 
-{% block js %}{% endblock %}
+{% block js %}
+<script src="/static/js/addrecipe.js"></script>
+{% endblock %}

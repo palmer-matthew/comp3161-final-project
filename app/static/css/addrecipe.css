@@ -89,6 +89,10 @@ h1 {
     border: none;
 }
 
+.instructions input {
+    padding-right: 50%;
+    
+}
 label {
     color: black;
     font-weight: 500;

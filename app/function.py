@@ -31,3 +31,10 @@ def getShoppingList(planid):
         print(result, len(result))
         close(conn)
         # return [i[0] for i in result]
+
+def addNewRecipe():
+    conn = connect(database='planner')
+    query = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%d","%d","%s","%d","%d","%s","%d")'
+    executeNQuery(query, conn)
+    
+    close(conn)

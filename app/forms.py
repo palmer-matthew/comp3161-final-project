@@ -16,7 +16,9 @@ class addRecipe(FlaskForm):
     
     image = FileField('Photo Upload', validators= [FileRequired(), FileAllowed(['jpg','png','Images only!'])])
     
-    ingredients = SelectMultipleField('Ingredients', validators=None, coerce=str, choices=[] )
+    ingredients = SelectMultipleField(u'Ingredients', choices=[('cpp', 'Carrots'), ('py', 'Plums'), ('text', 'Something Else')])
+
+    # ingredients = SelectMultipleField('Ingredients', choices=[('crr', Carrot), ('lt', 'Lettuce), ('or', 'Orange'), ('pl', 'plums)] )
     
     instructions = StringField('Instructions')
     
