@@ -3,7 +3,7 @@ from app import app
 from flask import render_template, url_for, redirect, flash, request, session, jsonify
 from werkzeug.security import check_password_hash
 from .function import *
-from .forms import LoginForm, SignUpForm
+from .forms import LoginForm, SignUpForm, addRecipe
 
 @app.route("/")
 def home():
@@ -56,7 +56,13 @@ def logout():
     session.pop('username', None)
     session.pop('logged_in', None)
     return redirect(url_for('home'))
-    
+
+@app.route("/addrecipe")
+def addrecipe():
+    recipeform = addRecipe()
+    return render_template('addrecipe.html' , form=recipeform)
+
+
 @app.route("/Search")
 def Search():
     search = request.form['search']
