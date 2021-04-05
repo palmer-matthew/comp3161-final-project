@@ -59,11 +59,22 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('home'))
 
-@app.route("/addrecipe")
+@app.route("/addrecipe", methods=['POST', 'GET'])
 def addrecipe():
     recipeform = addRecipe()
+    if request.method == 'POST':
+        if recipeform.validate_on_submit():
+            recipeName = request.form['recipe_name']
+            calorieCount = request.form['calorie_count']
+            inputServing = request.form['serving']
+            preparationTime = request.form['prep_time']
+            imageUpload = request.form['image']
+        
+            result = addNewRecipe(recipeName, preparationTime, inputServing, imageUpload, calorieCount)
+        
+        # ingredients = request.form['ingredients']
+        # instructions = request.form['instructions']
     return render_template('addrecipe.html' , form=recipeform)
-
 
 @app.route("/Search")
 def Search():

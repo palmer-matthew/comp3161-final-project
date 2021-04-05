@@ -15,20 +15,20 @@ class SignUpForm(FlaskForm):
 
 class addRecipe(FlaskForm):
     
-    recipe_name = StringField('Recipe Name')
+    recipe_name = StringField('Recipe Name', validators=[DataRequired()])
     
-    calorie_count = IntegerField('Calorie Count')
+    calorie_count = IntegerField('Calorie Count', validators=[DataRequired()])
     
-    serving = IntegerField('Serving')
+    serving = IntegerField('Serving', validators=[DataRequired()])
     
-    prep_time = IntegerField('Prep Time')
+    prep_time = IntegerField('Prep Time', validators=[DataRequired()])
     
     image = FileField('Photo Upload', validators= [FileRequired(), FileAllowed(['jpg','png','Images only!'])])
     
-    ingredients = SelectMultipleField(u'Ingredients', choices=[('cpp', 'Carrots'), ('py', 'Plums'), ('text', 'Something Else')])
+    ingredients = SelectMultipleField(u'Ingredients', validators=[DataRequired()], choices=[('cpp', 'Carrots'), ('py', 'Plums'), ('text', 'Something Else')])
 
     # ingredients = SelectMultipleField('Ingredients', choices=[('crr', Carrot), ('lt', 'Lettuce), ('or', 'Orange'), ('pl', 'plums)] )
     
-    instructions = StringField('Instructions')
+    instructions = StringField('Instructions', validators=[DataRequired()])
     
     add = SubmitField('Add')
