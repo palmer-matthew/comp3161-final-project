@@ -43,30 +43,22 @@ input {
 }
 
 h1 {
-    display:inline-flex;
+    float:left;
     color: black;
 }
 
-.add_btn{
+.add{
+    /* float: right; */
     float: right;
     background-color: #FF650E;
-    border-radius: 5px;
+    /* border-radius: 5px; */
     /* padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 20px;
     padding-right: 20px; */
 }
-.add_btn input {
-    background-color: #FF650E;
-    color: white;
-    border: none;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 50px;
-    padding-right: 50px;
-}
-
 .rec_name {
+    clear: both;
     float: left;
 }
 .cal_count{
@@ -91,7 +83,7 @@ h1 {
 
 .instructions input {
     padding-right: 50%;
-    
+
 }
 label {
     color: black;

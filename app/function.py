@@ -22,10 +22,11 @@ def addToInventory(userid , iID):
         return 'NOK'
         
 
-def addNewRecipe():
+def addNewRecipe(recipeName, preparationTime, inputServing, imageUpload, calorieCount):
     conn = connect(database='planner')
-    query = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%d","%d","%s","%d","%d","%s","%d")'
-    executeNQuery(query, conn)
+    query = 'INSERT INTO Recipe(recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%s", %d, %d ,"%s", %d)'
+
+    executeNQuery(query % (recipeName, preparationTime, inputServing , imageUpload , calorieCount), conn)
     close(conn)
 
     

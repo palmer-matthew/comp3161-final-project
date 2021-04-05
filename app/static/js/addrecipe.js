@@ -1,6 +1,22 @@
 window.onload = function(event){
     event.preventDefault();
 
+    const $addrecbtn = document.querySelector('.add');
+
+
+
+    $addrecbtn.addEventListener('click', (event) => {
+
+        event.preventDefault();
+
+        console.log('You added something');
+        alert("CLick");
+
+        
+    });
+
+
+
 
     document.querySelector(".add_btn").addEventListener('click', function(event) {
 
