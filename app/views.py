@@ -1,8 +1,10 @@
-from random import random
 import random
 from app import app
-from flask import render_template, url_for, redirect, flash, request, session
+from flask import render_template, url_for, redirect, flash, request, session, jsonify
 from .function import *
+
+#Global Values
+userid = 1
 
 @app.route("/")
 def home():
@@ -19,7 +21,8 @@ def profile():
     if session.get('log') == None:
         return render_template('home.html', log=False)
     else:
-        return render_template('profile.html', log=session.get('log'))
+        result = getIngredientsinKitchen(userid)
+        return render_template('profile.html', log=session.get('log'), kitchen=result)
 
 @app.route("/plan")
 def plan():
@@ -53,6 +56,23 @@ def recipe():
     else:
         return render_template('recipe.html', log=session.get('log'))
 
+
+#Server API Endpoints
+@app.route("/api/ingredients", methods=['GET'])
+def get_ingredients():
+    result = getIngredients()
+    if result == None:
+        return jsonify({ 'data' : 'NOK'})
+    else:
+        return jsonify({ 'data' : result})
+
+@app.route("/api/inventory", methods=['POST'])
+def inventory():
+    if request.method == 'POST':
+        result = addToInventory(userid, request.form['iID'])
+        if result == 'OK':
+            return jsonify({'data': 'OK'})
+    return jsonify({'data': 'NOK'})
 
 @app.after_request
 def add_header(response):

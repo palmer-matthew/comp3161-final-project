@@ -27,9 +27,9 @@ measurements = None
 recipes = []
 
 names = ['Recipe', 'MealPlan', 'User', 'Ingredient', 'Measurement', 'Instruction', 'includes', 'has', 'kitchen','contains','adds']
-lines = [['recipeID int auto_increment', 'creationDate date default CURRENT_DATE', 'recipeName varchar(255)', 'preparationTime int', 'inputServing int','imageUpload varchar(255)', 'calorieCount int', 'primary key(recipeID)'], \
+lines = [['recipeID int auto_increment', 'creationDate date default CURRENT_TIMESTAMP', 'recipeName varchar(255)', 'preparationTime int', 'inputServing int','imageUpload varchar(255)', 'calorieCount int', 'primary key(recipeID)'], \
          ['mealPlanID int auto_increment', 'planName varchar(150)', 'dateCreated date default CURRENT_DATE', 'primary key(mealPlanID)'],\
-         ['userID int auto_increment','fname varchar(50)','lname varchar(50)','username varchar(150)','password varchar(255)', 'primary key(userID)'],\
+         ['userID int auto_increment','fname varchar(50)','lname varchar(50)','username varchar(150)','user_password varchar(255)', 'primary key(userID)'],\
          ['ingredientID int auto_increment', 'ingredientName varchar(255)','primary key(ingredientID)'], \
          ['measurementID int auto_increment','quantity decimal(8,2)','unit varchar(50)','primary key(measurementID)'], \
          ['recipeID int', 'stepNumber int', 'direction varchar(255)', 'primary key(recipeID, stepNumber)', 'foreign key(recipeID) references Recipe(recipeID) on delete cascade'], \
@@ -41,9 +41,40 @@ lines = [['recipeID int auto_increment', 'creationDate date default CURRENT_DATE
         ]
 
 extra = """
-INSERT INTO MealPlan(mealPlanID) VALUES(1);
-INSERT INTO MealPlan(mealPlanID) VALUES(2);
-INSERT INTO MealPlan(mealPlanID) VALUES(3);
+/*==========================================CREATION OF STORED PROCEDURES===============================================*/
+DELIMITER //       
+    CREATE PROCEDURE GetShoppingList(IN planid int)
+    BEGIN
+        SELECT DISTINCT ingredientName FROM Recipe r JOIN contains c JOIN Ingredient i 
+             ON r.recipeID = c.recipeID AND c.ingredientID = i.ingredientID WHERE r.recipeID IN
+                (SELECT DISTINCT recipeID FROM MealPlan m JOIN includes i ON m.mealPlanID = i.mealPlanID 
+                    WHERE m.mealPlanID = planid);  
+    END //
+DELIMITER ;
+DELIMITER //  
+    CREATE PROCEDURE GetKitchen(IN id int)
+    BEGIN
+        SELECT DISTINCT ingredientName FROM Ingredient i JOIN kitchen k ON i.ingredientID = k.ingredientID WHERE k.userID = id;
+    END //
+DELIMITER ;
+DELIMITER //  
+    CREATE PROCEDURE GetIntKitchen(IN id int)
+    BEGIN
+        SELECT DISTINCT k.ingredientID FROM Ingredient i JOIN kitchen k ON i.ingredientID = k.ingredientID WHERE k.userID = id;
+    END //
+DELIMITER ;
+"""
+
+"""
+/*==========================================CREATION OF TRIGGER===============================================*/
+DELIMITER $$
+    CREATE TRIGGER Work_Trigger
+    AFTER insert ON worker
+    FOR EACH ROW
+    BEGIN
+        insert into worker_log(workername,log_time) values (new.workername,curtime());
+    END $$
+DELIMITER ;
 """
 def createTable():
     result = []
@@ -128,7 +159,7 @@ if __name__ == '__main__':
         #insert 200,000 users
         r.write("/*======================================INSERTING 250,000 USERS======================================*/\r")
 
-        user_stmt = 'INSERT INTO User(fname,lname,username,password) VALUES("%s", "%s", "%s", "%s");\r'
+        user_stmt = 'INSERT INTO User(fname,lname,username, user_password) VALUES("%s", "%s", "%s", "%s");\r'
         fake = Faker()
         nusers = 20 #Change to 250,000 when it is time to create
         # generate_password_hash(fake.password(length=10, special_chars=False), method='pbkdf2:sha256')
@@ -226,29 +257,31 @@ if __name__ == '__main__':
                 for i in range(number):
                     user = random.randint(1, nusers)
                     r.write(has_stmt % (i+1, user))
-
         print("Finished Inserting Recipe INSERT Statements and Connection Statements" + "."*10)
-
-    print('Connecting to SQL Server')
-    connection = connect()
-    if connection == None:
-        print('Failed to Connect')
-        exit()
-    else:
-        print('Connection Established')
-        print('Excecuting planner.sql')
-        try:
-            with open('planner.sql', 'r') as r:
-                with connection.cursor() as curs:
-                    for line in r:
-                        if line == '\r' or line == '':
-                            continue
-                        else:
-                            curs.execute(line)
-                            connection.commit()
-            close(connection)
-            print('Sucess...... Closing Script')
-        except Exception as e:
-            print(f'Error Occured while exceuting Script\n{e}')
-            exit()
+        print("Inserting Stored Procedure Statements" + "."*10)
+        r.write(extra)
+        print("Finished Inserting Stored Procedure Statements" + "."*10)
+    print('Sucess...... Closing Script')
+    # print('Connecting to SQL Server')
+    # connection = connect()
+    # if connection == None:
+    #     print('Failed to Connect')
+    #     exit()
+    # else:
+    #     print('Connection Established')
+    #     print('Excecuting planner.sql')
+    #     try:
+    #         with open('planner.sql', 'r') as r:
+    #             with connection.cursor() as curs:
+    #                 for line in r:
+    #                     if line == '\r' or line == '':
+    #                         continue
+    #                     else:
+    #                         curs.execute(line)
+    #                         connection.commit()
+    #         close(connection)
+    #         print('Sucess...... Closing Script')
+    #     except Exception as e:
+    #         print(f'Error Occured while exceuting Script\n{e}')
+    #         exit()
         

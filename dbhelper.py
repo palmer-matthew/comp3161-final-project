@@ -1,5 +1,6 @@
 import mysql.connector as db
 from mysql.connector import Error
+import os
 
 #cursor methods: fetchone() , fetchmany() , and fetchall()
 
@@ -23,6 +24,7 @@ def executeNQuery(query, connection):
         cursor = None
         cursor = connection.cursor()
         cursor.execute(query)
+        connection.commit()
         cursor.close()
     except Error as e:
         print(f'Log: Error {e.msg}')
