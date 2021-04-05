@@ -25,38 +25,44 @@
             <form>{{form.add}}<br><br></form> -->
             <form>
 
-            <div class="">   
+            <div class="rec_name">   
                 {{form.recipe_name.label}}<br>
-                {{form.recipe_name(size=30)}}
+                {{form.recipe_name}}<br><br>
             </div>
 
-            <div>
+            <div class="cal_count">
                 {{form.calorie_count.label}}<br>
-                {{form.calorie_count}}
+                {{form.calorie_count}}<br><br>
             </div>
                 
 
-            <div>
+            <div class="serv">
                 {{form.serving.label}}<br>
-                {{form.serving}}
+                {{form.serving}}<br><br>
             </div>
 
-            <div>
+            <div class="prep_t">
                 {{form.prep_time.label}}<br>
-                {{form.prep_time}}
+                {{form.prep_time}}<br><br>
             </div>
                 
 
-            <div>
+            <div class="browse_image">
                 {{form.image.label}}
                 {{form.image}}<br><br>
             </div>
 
+            <div class="ingredients">
                 {{form.ingredients.label}}
                 {{form.ingredients}}<br><br>
+            </div>
+                
 
+            <div>
                 {{form.instructions.label}}
                 {{form.instructions}}<br><br>
+            </div>
+                
 
             </form>
     </div>

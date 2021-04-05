@@ -14,22 +14,71 @@ body {
 
 main {
     background-color: #F5F5F5;
-    border: 2px solid gray;
+    border: 1px solid gray;
     border-radius: 15px;
-
-    margin: 10%;
+    margin-left: 30%;
+    margin-right: 30%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    padding-top: 15px;
+    padding-bottom: 5px;
 }
-
-
 
 .add_container {
     margin-top: 5%;
     margin-bottom: 5%;
     border-radius: 20%;
-    margin-right: 15%;
-    margin-left: 15%;
+    margin-right: 10%;
+    margin-left: 10%;
 }
+
 
 .form_container {
     background-color: #F5F5F5;
+}
+
+input {
+    border: 2px solid black;
+    border-radius: 3px;
+}
+
+h1 {
+    display:inline-flex;
+    color: black;
+}
+
+.add_btn{
+    float: right;
+    background-color: #FF650E;
+    border-radius: 5px;
+}
+.add_btn input {
+    background-color: #FF650E;
+    color: white;
+    border: none;
+}
+
+.rec_name {
+    float: left;
+}
+.cal_count{
+    float: right;
+}
+
+.serv {
+    clear: both;
+    float: left;
+}
+
+.prep_t {
+    float: right;
+}
+
+.browse_image {
+    clear: both;
+}
+
+label {
+    color: black;
+    font-weight: 500;
 }
