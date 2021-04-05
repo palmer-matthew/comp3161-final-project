@@ -22,6 +22,13 @@ def addToInventory(userid , iID):
         return 'NOK'
         
 
+def addNewRecipe():
+    conn = connect(database='planner')
+    query = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%d","%d","%s","%d","%d","%s","%d")'
+    executeNQuery(query, conn)
+    close(conn)
+
+    
 def getIngredientsinKitchen(userid, string=True):
     conn = connect(database='planner')
     if string==True:
@@ -123,4 +130,4 @@ def SearchMealPlan(planName):
         return None
     else:
         close(conn)
-        return None 
+        return None

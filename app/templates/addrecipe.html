@@ -1,0 +1,77 @@
+
+{% extends "base.html" %} 
+
+{% block css %}
+    <link href="/static/css/addrecipe.css" rel="stylesheet"> 
+    <!-- <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet"> -->
+{% endblock %}
+
+{% block title %} 
+<title>Add Recipe</title>
+{% endblock %}
+
+
+
+{% block main %}
+<div>
+    <!-- <p></p>  Success Message -->
+</div>
+<div class="add_container">
+    <h1>Add Recipe</h1>
+    <div class="add_btn">
+        <form>{{form.add}}<br></form>
+    </div>
+    
+    <div class="form_container">
+        <!-- <h1>Add Recipe</h1>
+
+            <form>{{form.add}}<br><br></form> -->
+            <form>
+
+            <div class="rec_name">   
+                {{form.recipe_name.label}}<br>
+                {{form.recipe_name}}<br><br>
+            </div>
+
+            <div class="cal_count">
+                {{form.calorie_count.label}}<br>
+                {{form.calorie_count}}<br><br>
+            </div>
+                
+
+            <div class="serv">
+                {{form.serving.label}}<br>
+                {{form.serving}}<br><br>
+            </div>
+
+            <div class="prep_t">
+                {{form.prep_time.label}}<br>
+                {{form.prep_time}}<br><br>
+            </div>
+                
+
+            <div class="browse_image">
+                {{form.image.label}}
+                {{form.image}}<br><br>
+            </div>
+
+            <div class="ingredients">
+                {{form.ingredients.label}}<br>
+                {{form.ingredients}}<br><br>
+            </div>
+                
+
+            <div class="instructions">
+                {{form.instructions.label}}<br>
+                {{form.instructions}}<br><br>
+            </div>
+                
+
+            </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/addrecipe.js"></script>
+{% endblock %}
