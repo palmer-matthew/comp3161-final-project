@@ -72,11 +72,12 @@ def addrecipe():
             inputServing = request.form['serving']
             preparationTime = request.form['prep_time']
 
+            print(request.form.get('ingredients'), request.form.get('instruct'))
             imageUpload = request.files['image']
             filename = secure_filename(imageUpload.filename)
             imageUpload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
+            # result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
             # flash('Recipe Successful Uploaded', 'success')
         flash_errors(recipeform)
     return render_template('addrecipe.html' ,log=session.get('logged_in'), form=recipeform)
@@ -87,15 +88,23 @@ def search():
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
     searchF = SearchForm()
-    # if request.form['matchRecipe']|request.form['matchMealPLan']:
-    #     if searchF.validate_on_submit():
-    #         recipes = request.form['search']
-    #         result = SearchRecipe(recipes)
-    #     if result == None:
-    #         flash('Search not found')
-    #         if result == 'OK':
-    #             return render_template('search.html', form=searchF, result=result)
-    #     flash_errors(searchF)
+    if searchF.validate_on_submit() and request.form['matchRecipe']:
+        searched = request.form['search']
+        result = SearchRecipe(searched)
+        if result == None:
+            flash('Search not found')
+            if result == 'OK':
+                return redirect(url_for('recipe'))
+        flash_errors(searchF)
+    else:
+        if searchF.validate_on_submit() and request.form['matchMealPLan']:
+            searches = request.form['search']
+            result = SearchRecipe(searches)
+            if result == None:
+                flash('Search not found')
+                if result == 'OK':
+                    return redirect(url_for('plan-view'))
+            flash_errors(searchF)
     return render_template('search.html', form=searchF)
 
 @app.route("/profile")

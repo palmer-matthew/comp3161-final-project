@@ -9,8 +9,82 @@ window.onload = function(event){
     const instruct = document.querySelector('.instruct');
     const select1 = document.querySelector('#ingredient');
     const select2 = document.querySelector('#measurement');
+    const input = document.querySelector('#instruction');
     const display1 = document.querySelector('.sel-ing');
     const display2 = document.querySelector('.sel-ins');
+
+
+    function r(element){
+        let v = element.id;
+        let start1 = `
+        <thead>
+            <tr>
+                <th class="text-center" colspan="2">Ingredients</th>
+            </tr>
+        </thead>
+        <tbody>`;
+        let end1 = '</tbody>';
+        
+        element.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            inslist.splice(v, 1);
+
+            for(i=0; i < inslist.length; i++){
+                start1 += `
+                <tr>
+                    <td>${i+1}. ${inslist[i]}</td>
+                    <td class="center fs-3 btn click" id=${i}> &times; </td>
+                </tr>`;
+                
+            }
+            display2.innerHTML = start1 + end1;
+
+            if(inslist.length < 1){
+                display2.classList.remove('activet');
+            }else{
+                let x = display2.querySelectorAll('.click');
+                x.forEach(ele => r(ele));
+            }
+        });
+    }
+
+
+    function remo(element){
+        let v = element.id;
+        let start1 = `
+        <thead>
+            <tr>
+                <th class="text-center" colspan="2">Ingredients</th>
+            </tr>
+        </thead>
+        <tbody>`;
+        let end1 = '</tbody>';
+        
+        element.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            ingredients.splice(v, 1);
+            inglist.splice(v, 1);
+
+            for(i=0; i < inglist.length; i++){
+                start1 += `
+                <tr>
+                    <td>${inglist[i][1]} ${inglist[i][2]}</td>
+                    <td class="center fs-3 btn click" id=${inglist[i][0]}> &times; </td>
+                </tr>`;
+                
+            }
+            display1.innerHTML = start1 + end1;
+
+            if(inglist.length < 1){
+                display1.classList.remove('activet');
+            }else{
+                let x = display1.querySelectorAll('.click');
+                x.forEach(ele => remo(ele));
+            }
+        });
+    }
 
     function getIngredients(){
         fetch('/api/ingredients', {
@@ -54,21 +128,142 @@ window.onload = function(event){
         console.log('You added something');
 
         let form = document.forms[0];
+
+        var formfield = document.createElement("input");
+        formfield.type = "hidden";
+        formfield.name = "ingredients";
+
+        var formfield1 = document.createElement("input");
+        formfield1.type = "hidden";
+        formfield1.name = "instruct";
+
+        var formval = "";
+        var formval1 = "";
+
+        for(i=0; i < inglist.length; i++){
+            if(i == 0){
+                formval += inglist[i][0];
+            }else{
+                formval += ',' + inglist[i][0];
+            }
+        }
+
+        for(i=0; i < inslist.length; i++){
+            if(i == 0){
+                formval1 += inslist[i];
+            }else{
+                formval1 += '|' + inslist[i];
+            }
+        }
+
+        formfield.value = formval;
+        formfield1.value = formval1
+        form.appendChild(formfield);
+        form.appendChild(formfield1);
+
         form.submit();
         
     });
 
     adding.addEventListener('click', (event) => {
         event.preventDefault();
+        
+        let iID = select1.selectedOptions[0].value;
+        let mID = select2.selectedOptions[0].value;
+        let ival = select1.selectedOptions[0].textContent;
+        let mval = select2.selectedOptions[0].textContent;
+        let data = `${mID}|${iID}`;
+        let start = `
+        <thead>
+            <tr>
+                <th class="text-center" colspan="2">Ingredients</th>
+            </tr>
+        </thead>
+        <tbody>`;
+        let end = '</tbody>';
+        if(!ingredients.includes(iID)){
+            inglist.push([data, mval, ival, iID]);
+            ingredients.push(iID);
+        }
 
-        let value = select1.selectedOptions[0].value;
-        let val = select2.selectedOptions[0].value;
-
-        console.log(value);
-        console.log(val);
+        if(display1.classList.contains('activet')){
+            for(i=0; i < inglist.length; i++){
+                start += `
+                <tr>
+                    <td>${inglist[i][1]} ${inglist[i][2]}</td>
+                    <td class="center fs-3 btn click" id=${inglist[i][0]}> &times; </td>
+                </tr>`;
+                
+            }
+            display1.innerHTML = start + end;
+        }else{
+            display1.classList.add('activet');
+            for(i=0; i < inglist.length; i++){
+                start += `
+                    <tr>
+                        <td>${inglist[i][1]} ${inglist[i][2]}</td>
+                        <td class="center fs-3 btn click" id=${i}> &times; </td>
+                    </tr>`;
+            }
+            display1.innerHTML = start + end;
+        }
+        
+        if(inglist.length > 0){
+            let x = display1.querySelectorAll('.click');
+            x.forEach(ele => remo(ele));
+        }
     });
 
+
     instruct.addEventListener('click', (event) => {
+
+        event.preventDefault();
+
+        let data = input.value;
+        let start = `
+        <thead>
+            <tr>
+                <th class="text-center" colspan="2">Instructions</th>
+            </tr>
+        </thead>
+        <tbody>`;
+        let end = '</tbody>';
+
+        if (data != "" || data == null){
+            inslist.push(data);
+        }
+
+        if(display2.classList.contains('activet')){
+            for(i=0; i < inslist.length; i++){
+                start += `
+                <tr>
+                    <td>${i+1}. ${inslist[i]}</td>
+                    <td class="center fs-3 btn click" id=${i}> &times; </td>
+                </tr>`;
+                
+            }
+            input.value = "";
+            display2.innerHTML = start + end;
+        }else{
+            if(inslist.length > 0){
+                display2.classList.add('activet');
+                for(i=0; i < inslist.length; i++){
+                    start += `
+                    <tr>
+                        <td>${i+1}. ${inslist[i]}</td>
+                        <td class="center fs-3 btn click" id=${i}> &times; </td>
+                    </tr>`;
+                    
+                }
+                input.value = "";
+                display2.innerHTML = start + end;
+            }
+        }
+        
+        if(inslist.length > 0){
+            let x = display2.querySelectorAll('.click');
+            x.forEach(ele => r(ele));
+        }
 
     });
 

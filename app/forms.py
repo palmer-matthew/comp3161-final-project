@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms.fields import StringField,IntegerField, TextAreaField, SelectMultipleField, SubmitField, PasswordField
+from wtforms.fields import StringField,IntegerField, TextAreaField, SelectMultipleField, SubmitField, PasswordField, RadioField
 from wtforms.validators import Email,DataRequired
 
 class LoginForm(FlaskForm):
@@ -15,6 +15,8 @@ class SignUpForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
+    matchR = RadioField('Recipe', validators=[DataRequired()])
+    matchM = RadioField('Meal Plan', validators=[DataRequired()])
 
 class addRecipe(FlaskForm):
     

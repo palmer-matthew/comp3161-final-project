@@ -5,23 +5,25 @@
 {% block css %}
 <link rel="stylesheet" href="static/css/loginjs.css"> 
 {% endblock %}
- 
-{% block js %} 
-<script src="" type="text/javascript"></script>
-{% endblock %}
-{% block main %}
-<div class="container min">
-    <h2 class="fs-1">Search</h2>
-    <form class="text-center d-flex flex-row" action="{{url_for('search')}}" method="POST">
-        {{ form.csrf_token }}
-        {{ form.search(class="center", placeholder="Search") }}
-        
-        {% for matchRecipe in form.radio %}
-            {{ matchRecipe }} 
-            {{ matchRecipe.label }}
-        {& endfor %}
 
-        <button  type="button" value="Search"> Search </button> 
-    </form>
-</div>
+
+{% block main %}
+    <div class="container min">
+        <h2 class="fs-1">Search</h2>
+        <form class="text-center d-flex flex-row" action="{{url_for('search')}}" method="POST">
+            {{ form.csrf_token }}
+            {{ form.search(class="center", placeholder="Search") }}
+            
+            {% for matchRecipe in form.radio %}
+                {{ matchRecipe }} 
+                {{ matchRecipe.label }}
+            {% endfor %}
+
+            {% for matchMealPLan in form.radio %}
+                {{ matchMealPLan }} 
+                {{ matchMealPLan.label }}
+            {% endfor %}
+            <button  type="button" value="Search"> Search </button> 
+        </form>
+    </div>
 {% endblock %}
