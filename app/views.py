@@ -124,7 +124,8 @@ def search():
 def profile():
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    global userid
+    global userid, current_meal_plan
+    current_meal_plan = None
     result = getIngredientsinKitchen(userid)
     return render_template('profile.html', log=session.get('logged_in'), name=session.get('name'), uname=session.get('username'), kitchen=result)
 
@@ -138,7 +139,16 @@ def plan():
 def plan_view(id):
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    return render_template('plan_view.html', log=session.get('logged_in'))
+    result = getMealPlan(int(id))
+    if result == None:
+        flash('Could Not Retrieve Meal Plan', 'danger')
+        return redirect(url_for('profile'))
+    elif result == 'MPDE':
+        flash('Could Not Retrieve Meal Plan', 'danger')
+        return redirect(url_for('profile'))
+    global current_meal_plan
+    current_meal_plan = result[-1]
+    return render_template('plan_view.html', log=session.get('logged_in'), info=result[-1], name=result[1])
 
 @app.route("/shopping")
 def shopping():
@@ -208,11 +218,12 @@ def save_plan():
     if request.method == 'POST':
         global current_meal_plan, userid
         name = request.form.get('name')
-        if name == 'NONE':
-            name = ''.join(random.choice(string.ascii_letters) for i in range(len(10)))
-            result = saveMealPlan(current_meal_plan, name, userid)
-        else:
-            result = saveMealPlan(current_meal_plan, name, userid)
+        if current_meal_plan != None:
+            if name == 'NONE':
+                name = ''.join(random.choice(string.ascii_letters) for i in range(len(10)))
+                result = saveMealPlan(current_meal_plan, name, userid)
+            else:
+                result = saveMealPlan(current_meal_plan, name, userid)
         if result == None:
             return jsonify({'data': 'NOK'})
         else:

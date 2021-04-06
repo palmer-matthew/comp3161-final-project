@@ -263,10 +263,9 @@ def createMealPlan(calorieCount=None):
                 final.append(tpl)
             return final, sum(total)
     else:
-        #Need to test the Calorie section
-        avg = int(calorieCount / 21)
-        query = 'call calorieCount(%d);'
-        result = executeRQuery(query % (avg), conn)
+        avg = int(int(calorieCount) / 21)
+        query = 'call calorieCount(%d, %d);'
+        result = executeRQuery(query % (avg, 500), conn)
         if result == None or result == []:
             close(conn)
             return None
@@ -312,20 +311,45 @@ def saveMealPlan(mealPlan, name, userid):
 
 def getMealPlan(id):
     conn = connect(database='planner')
-    query = 'SELECT mealPlanID, planName FROM MealPlan WHERE mealPlanid = %d DESC LIMIT 1;'
-    result = executeRQuery(query, conn)
+    query = 'SELECT mealPlanID, planName FROM MealPlan WHERE mealPlanID = %d LIMIT 1;'
+    result = executeRQuery(query % (int(id)), conn)
     if result == None:
+        close(conn)
         return None
     else:
+        close(conn)
+        if result == []:
+            return 'MPDE'
+        conn = connect(database='planner')
         id, name = result[0]
-        includes_stmt = 'call ;'
-        has_stmt = 'INSERT INTO has(mealPlanID, userID) VALUES(%d, %d);'
-        for i, n in enumerate(mealPlan):
-            for j, val in enumerate(n):
-                result = executeNQuery(includes_stmt % (int(id), int(val[0]), i+1, j+1), conn)
-                if result == None:
-                    return None
-        result = executeNQuery(has_stmt%(int(id), int(userid)),conn)
-        if result == None:
-            return None
-        return ['OK', id]
+        queries = []
+        query = 'getPlanDay'
+        for i in range(1,8):
+            day = []
+            result = executeProcedure(query, [int(id), int(i)], conn)
+            if result == None:
+                close(conn)
+                return None
+            else:
+                day.append(i)
+                for t in result:
+                    day.append(t.fetchall())              
+            queries.append(day)
+        close(conn)
+        return ['OK', name, queries]
+        
+        # day_stmt = 'getPlanDay(%d, %d);'
+        # for i in range(1,8):
+        #     result = executeRQuery(day_stmt % (int(id), int(i)), conn)
+        #     day = []
+        #     if result == None:
+        #         return None
+        #     else:
+        #         day.append(i)
+        #         tpl = []
+        #         for j in result:
+        #             tpl.append(j)
+        #         day.append(tpl)
+        #     queries.append(day)
+        # close(conn)
+        # return ['OK', name, queries]

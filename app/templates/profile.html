@@ -23,7 +23,7 @@
             <p>Last Name: {{ name[1] }}</p>
         </div>
     </div>
-    <h1 class="fw-bold my-5"> Created Recipes:</h1>
+    <h1 class="fw-bold my-5"> Recent Created Recipes:</h1>
     <div class='card-section'>
         <a href="{{ url_for('recipe')}}"><div class="py-2 card grid-card mb-3">
             <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
@@ -46,9 +46,9 @@
             </div>
         </div>
     </div>
-    <h1 class="fw-bold my-5"> Created Meal Plans:</h1>
+    <h1 class="fw-bold my-5"> Recent Created Meal Plans:</h1>
     <div class='card-section'>
-        <a href="{{ url_for('plan_view')}}"><div class="py-3 card grid-card mb-3">
+        <a href="#"><div class="py-3 card grid-card mb-3">
             <img class='image' src="{{ url_for('static', filename='img/menu_book_black_24dp.svg')}}" alt="">
             <div class="btn-container">
                 <div>

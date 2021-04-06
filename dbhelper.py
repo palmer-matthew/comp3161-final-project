@@ -27,6 +27,7 @@ def executeNQuery(query, connection):
         connection.commit()
         cursor.close()
     except Error as e:
+        connection.rollback()
         print(f'Log: Error {e.msg}')
         return None
     return 'OK'
@@ -39,6 +40,7 @@ def executeRQuery(query, connection):
         results = cursor.fetchall()
         return results
     except Error as e:
+        connection.rollback()
         print(f'Log: Error {e.msg}')
         return None
 
@@ -50,9 +52,6 @@ def executeProcedure(procedure, args, connection):
         results  = cursor.stored_results()
         return results
     except Error as e:
+        connection.rollback()
         print(f'Log: Error {e.msg}')
         return None
-
-
-
-

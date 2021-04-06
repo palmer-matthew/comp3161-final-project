@@ -12,261 +12,33 @@
 <div class="container">
     <div class='mb-5 card-section'>
         <div class="btn-container my-4">
-            <h1 class="fw-bold text-capitalize mb-3"> Meal Plan: Kadhjskandkjsahd</h1>
+            <h1 class="fw-bold text-capitalize mb-3"> Meal Plan: {{name}}</h1>
             <a href="{{ url_for('shopping')}}" class='btn py-3 px-4 bg-btn text-white'>Build Shopping List</a>
         </div>
-        <div class="day section mb-5">
-            <h4 class="text-decoration-underline">Day 1</h4>
-            <h5>Breakfast</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
+        {% for i in info %}
+            <div class="day section mb-5">
+                <h4 class="text-decoration-underline">Day {{ i[0]}}</h4>
+                {%for j in i[1] %}
+                    {% if j[0] == 1%}
+                        <h5>Breakfast</h5>
+                    {% elif j[0] == 2 %}
+                        <h5>Lunch</h5>
+                    {% elif j[0] == 3 %}
+                        <h5>Dinner</h5>
+                    {% endif %}
+                    <div class="py-2 card grid-card mb-3">
+                        <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
+                        <div class="btn-container">
+                            <div>
+                                <p class="text-capitalize fw-bold fs-5 nbm">{{ j[2] }}</p>
+                                <p class="fs-6 fw-light nbm">Servings: {{ j[3] }}</p>
+                            </div>
+                            <p class="nbm me-4">Calories: {{ j[4] }}</p>
+                        </div>
                     </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
+                {% endfor %}
             </div>
-            <h5>Lunch</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Dinner</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-        </div>
-        <div class="day section mb-5">
-            <h4 class="text-decoration-underline">Day 2</h4>
-            <h5>Breakfast</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Lunch</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Dinner</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-        </div>
-        <div class="day section mb-5">
-            <h4 class="text-decoration-underline">Day 3</h4>
-            <h5>Breakfast</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Lunch</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Dinner</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-        </div>
-        <div class="day section mb-5">
-            <h4 class="text-decoration-underline">Day 4</h4>
-            <h5>Breakfast</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Lunch</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Dinner</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-        </div>
-        <div class="day section mb-5">
-            <h4 class="text-decoration-underline">Day 5</h4>
-            <h5>Breakfast</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Lunch</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Dinner</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-        </div>
-        <div class="day section mb-5">
-            <h4 class="text-decoration-underline">Day 6</h4>
-            <h5>Breakfast</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Lunch</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Dinner</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-        </div>
-        <div class="day section mb-5">
-            <h4 class="text-decoration-underline">Day 7</h4>
-            <h5>Breakfast</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Lunch</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-            <h5>Dinner</h5>
-            <div class="py-2 card grid-card mb-3">
-                <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-                <div class="btn-container">
-                    <div>
-                        <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                        <p class="fs-6 fw-light nbm">Servings: 6</p>
-                    </div>
-                    <p class="nbm me-4">Created: 2020-03-12</p>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

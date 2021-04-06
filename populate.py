@@ -78,13 +78,13 @@ DELIMITER ;
 DELIMITER //
     CREATE PROCEDURE calorieCount(IN calories int, amt int)
     BEGIN
-        SELECT * FROM Recipe WHERE calorieCount <= calories LIMIT amt;
+        SELECT recipeID, recipeName, inputServing, calorieCount FROM Recipe WHERE calorieCount <= calories LIMIT amt;
     END //
 DELIMITER ;
 DELIMITER //
     CREATE PROCEDURE getPlanDay(IN mid int, day int)
     BEGIN
-        SELECT dayNum, mealNum, i.recipeID, inputServing, calorieCount FROM includes i JOIN Recipe r ON i.recipeID = r.recipeID WHERE i.mealPlanID = mid AND i.dayNum = day;
+        SELECT mealNum, i.recipeID, recipeName, inputServing, calorieCount FROM includes i JOIN Recipe r ON i.recipeID = r.recipeID WHERE i.mealPlanID = mid AND i.dayNum = day ORDER BY mealNum;
     END //
 DELIMITER ;
 """
