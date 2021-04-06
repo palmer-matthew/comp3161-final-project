@@ -42,6 +42,17 @@ def executeRQuery(query, connection):
         print(f'Log: Error {e.msg}')
         return None
 
+def executeProcedure(procedure, args, connection):
+    try:
+        cursor = None
+        cursor = connection.cursor()
+        cursor.callproc(procedure, args)
+        results  = cursor.fetchall()
+        return results
+    except Error as e:
+        print(f'Log: Error {e.msg}')
+        return None
+
 
 
 

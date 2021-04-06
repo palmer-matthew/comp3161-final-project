@@ -69,7 +69,7 @@ def addConnections(recipeID, ingredients, instructions, userid):
     
 def getIngredientsinKitchen(userid, string=True):
     conn = connect(database='planner')
-    if string==True:
+    if string == True:
         query = 'call GetKitchen(%d);'
     else:
         query = 'call GetIntKitchen(%d);'
@@ -229,64 +229,50 @@ def createMealPlan(calorieCount=None):
                 final.append(tpl)
             return final, sum(total)
     else:
-        pass
-        # close(conn)
-        # nrecipe, lst, distinct = [i[0] for i in result][0], [], []
-        # for i in range(7):
-        #     m1, m2, m3 = random.randint(1, nrecipe), random.randint(1, nrecipe), random.randint(1, nrecipe)
-        #     if m1 not in distinct:
-        #         distinct.append(m1)
-        #     if m2 not in distinct:
-        #         distinct.append(m2)
-        #     if m3 not in distinct:
-        #         distinct.append(m3)
-        #     lst.append((m1,m2,m3))
-        # query = f"SELECT recipeID, recipeName, inputServing, calorieCount FROM Recipe WHERE recipeID IN {tuple(distinct)}"
-        # result = executeRQuery(query, conn)
-        # if result == None or result == []:
-        #     close(conn)
-        #     return None
-        # else:
-        #     final, total = [], []
-        #     for i in lst:
-        #         tpl = []
-        #         for j in i:
-        #             for n in result:
-        #                 if n[0] == j:
-        #                     tpl.append(n)
-        #                     total.append(n[-1])
-        #                     break
-        #         final.append(tpl)
-        #     return final, sum(total)
-        
+        #Need to test the Calorie section
+        avg = int(calorieCount / 21)
+        query = 'call calorieCount(%d);'
+        result = executeRQuery(query % (avg), conn)
+        if result == None or result == []:
+            close(conn)
+            return None
+        else:
+            final, total = [], []
+            for i in range(7):
+                tpl = []
+                for j in range(3):
+                    meal = random.choice(result)
+                    tpl.append(meal)
+                    total.append(meal[-1])
+                final.append(tpl)
+            return final, sum(total)
         
 
-# def saveMealPlan(mealPlan):
-#     query = 'INSERT INTO MealPlan(MealPlanID, planName, dateCreated) VALUES(%d, "%s", "%s") From recipe r JOIN calorieCount c \
-#          ON r.recipeID = c. LIMIT 1;'
-#     result = [i[0] for i in executeRQuery(query % (calorieCount), conn)]
-#     if result == None or result == []:
-#         close(conn)
-#         return None
-#     else:
-#         close(conn)
-#         return [i[0].upper() for i in result]
-
-
-
-# def randomMeal(MealPlanID):
-#     conn = connect(database='planner')
-#     query= 'SELECT  FROM table  ORDER BY RAND () LIMIT 1' 
-
-# def generateMealPlan(recipeId):
-#     conn = connect(database='planner')
-#     query = 'SELECT * FROM recipe WHERE recipeName = %s LIMIT 21;'
-#     result = [i[0] for i in executeRQuery(query % (recipeId), conn)]
-#     if result == None or result == []:
-#         close(conn)
-#         return None
-#     else:
-#         close(conn)
-#         return [i[0].upper() for i in result]
-
+def saveMealPlan(mealPlan, name, userid):
+    today = date.today()
+    createddate = today.strftime('%Y-%m-%d')
+    query = 'INSERT INTO MealPlan(planName, dateCreated) VALUES("%s", "%s");'
+    conn = connect(database='planner')
+    result = executeNQuery(query % (name, createddate), conn)
+    if result == None:
+        return None
+    query = 'SELECT mealPlanID FROM MealPlan ORDER BY mealPlanID DESC LIMIT 1;'
+    result = executeRQuery(query % (name, createddate), conn)
+    if result == None:
+        return None
+    else:
+        id = result[0][0]
+        includes_stmt = 'INSERT INTO includes(mealPlanID, recipeID) VALUES(%d, %d);\r'
+        has_stmt = 'INSERT INTO has(mealPlanID, userID) VALUES(%d, %d);\r'
+        #Probably insert a column for the day, and the type of meal in includes
+        #Probably insert a week number in the Meal Plan column 
+        for i, n in enumerate(mealPlan):
+            for j, val in enumerate(n):
+                result = executeNQuery(includes_stmt % (int(id), int(val[0])), conn)
+                if result == None:
+                    return None
+        result = executeNQuery(has_stmt%(int(id), int(userid)),conn)
+        if result == None:
+            return None
+        return 'OK'
 

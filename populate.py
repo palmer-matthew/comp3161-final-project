@@ -75,6 +75,12 @@ DELIMITER //
         INSERT INTO Instruction(recipeID, stepNumber, direction) VALUES(rid, step, direct);
     END //
 DELIMITER ;
+DELIMITER //  
+    CREATE PROCEDURE calorieCount(IN calories int)
+    BEGIN
+        SELECT * FROM Recipe WHERE calorieCount <= calories LIMIT 500;
+    END //
+DELIMITER ;
 """
 
 """

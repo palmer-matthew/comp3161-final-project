@@ -9,7 +9,7 @@ from .globals import *
 
 @app.route("/")
 def home():
-    return render_template('home.html', log=session.get('log'))
+    return render_template('home.html', log=session.get('logged_in'))
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
@@ -118,7 +118,7 @@ def search():
                 if result == 'OK':
                     return redirect(url_for('plan-view'))
             flash_errors(searchF)
-    return render_template('search.html', form=searchF)
+    return render_template('search.html', form=searchF, log=session.get('logged_in'))
 
 @app.route("/profile")
 def profile():
