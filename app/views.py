@@ -71,14 +71,27 @@ def addrecipe():
             calorieCount = request.form['calorie_count']
             inputServing = request.form['serving']
             preparationTime = request.form['prep_time']
+            ingredients = request.form.get('ingredients')
+            instructions = request.form.get('instruct')
 
-            print(request.form.get('ingredients'), request.form.get('instruct'))
             imageUpload = request.files['image']
             filename = secure_filename(imageUpload.filename)
             imageUpload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            # result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
-            # flash('Recipe Successful Uploaded', 'success')
+            result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
+            if result[0] == 'OK':
+                print(result[1])
+                result = addConnections(result[1], ingredients, instructions, int(userid))
+                if result == 'OK':
+                    flash('Recipe Successful Uploaded', 'success')
+                    return redirect(url_for('profile'))
+                else:
+                    # removeRecipe(result[1])
+                    flash('Failed to Add Recipe', 'danger')
+                    return redirect(url_for('profile'))
+            else:
+                flash('Recipe Addition was Unsuccessful', 'danger')
+                return redirect(url_for('profile'))
         flash_errors(recipeform)
     return render_template('addrecipe.html' ,log=session.get('logged_in'), form=recipeform)
 

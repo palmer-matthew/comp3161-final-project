@@ -137,6 +137,9 @@ window.onload = function(event){
         formfield1.type = "hidden";
         formfield1.name = "instruct";
 
+        console.log(inglist);
+        console.log(inslist);
+
         var formval = "";
         var formval1 = "";
 

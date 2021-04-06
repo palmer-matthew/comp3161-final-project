@@ -29,7 +29,7 @@ recipes = []
 names = ['Recipe', 'MealPlan', 'User', 'Ingredient', 'Measurement', 'Instruction', 'includes', 'has', 'kitchen','contains','adds']
 lines = [['recipeID int auto_increment', 'creationDate date', 'recipeName varchar(255)', 'preparationTime int', 'inputServing int','imageUpload varchar(255)', 'calorieCount int', 'primary key(recipeID)'], \
          ['mealPlanID int auto_increment', 'planName varchar(150)', 'dateCreated date', 'primary key(mealPlanID)'],\
-         ['userID int auto_increment','fname varchar(50)','lname varchar(50)','username varchar(150)','password varchar(255)', 'primary key(userID)'],\
+         ['userID int auto_increment','fname varchar(50)','lname varchar(50)','username varchar(150)','user_password varchar(255)', 'primary key(userID)'],\
          ['ingredientID int auto_increment', 'ingredientName varchar(255)','primary key(ingredientID)'], \
          ['measurementID int auto_increment','quantity decimal(8,2)','unit varchar(50)','primary key(measurementID)'], \
          ['recipeID int', 'stepNumber int', 'direction varchar(255)', 'primary key(recipeID, stepNumber)', 'foreign key(recipeID) references Recipe(recipeID) on delete cascade'], \
@@ -61,6 +61,18 @@ DELIMITER //
     CREATE PROCEDURE GetIntKitchen(IN id int)
     BEGIN
         SELECT DISTINCT k.ingredientID FROM Ingredient i JOIN kitchen k ON i.ingredientID = k.ingredientID WHERE k.userID = id;
+    END //
+DELIMITER ;
+DELIMITER //  
+    CREATE PROCEDURE insertContains(IN rid int, iid int, mid int)
+    BEGIN
+        INSERT INTO contains(recipeID, ingredientID, measurementID) VALUES(rid, iid, mid);
+    END //
+DELIMITER ;
+DELIMITER //  
+    CREATE PROCEDURE insertInstruction(IN rid int, step int, direct varchar(255))
+    BEGIN
+        INSERT INTO Instruction(recipeID, stepNumber, direction) VALUES(rid, step, direct);
     END //
 DELIMITER ;
 """

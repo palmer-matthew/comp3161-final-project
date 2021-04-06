@@ -26,10 +26,45 @@ def addToInventory(userid , iID):
 
 def addNewRecipe(recipeName, preparationTime, inputServing, imageUpload, calorieCount):
     conn = connect(database='planner')
-    query = 'INSERT INTO Recipe(recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%s", %d, %d ,"%s", %d)'
+    today = date.today()
+    createddate = today.strftime('%Y-%m-%d')
+    query = 'INSERT INTO Recipe(creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%s", "%s", %d, %d, "%s", %d);'
+    result = executeNQuery(query % (createddate, recipeName, int(preparationTime), int(inputServing), imageUpload , int(calorieCount)), conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        query = 'SELECT recipeID FROM Recipe ORDER BY recipeID DESC LIMIT 1;'
+        result = executeRQuery(query, conn)
+        if result == None:
+            close(conn)
+            return None
+        else:
+            close(conn)
+            result = [i[0] for i in result][0]
+            return 'OK', result
 
-    executeNQuery(query % (recipeName, preparationTime, inputServing , imageUpload , calorieCount), conn)
+def addConnections(recipeID, ingredients, instructions, userid):
+    conn = connect(database='planner')
+    link = ingredients.split(',')
+    query = 'call insertContains(%d, %d, %d);'
+    for i in link:
+        part = list(map(int, i.split('|')))
+        result = executeNQuery(query % (int(recipeID), part[1], part[0]), conn)
+        if result == None:
+            return None
+    direct = instructions.split('|')
+    query = 'call insertInstruction(%d, %d, "%s");'
+    for i, val in enumerate(direct):
+        result = executeNQuery(query % (int(recipeID), i+1, val), conn)
+        if result == None:
+            return None
+    query = 'INSERT INTO adds(recipeID, userID) VALUES(%d, %d);'
+    result = executeNQuery(query % (int(recipeID), userid), conn)
+    if result == None:
+        return None
     close(conn)
+    return 'OK'
 
     
 def getIngredientsinKitchen(userid, string=True):
