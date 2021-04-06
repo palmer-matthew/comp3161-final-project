@@ -15,8 +15,7 @@ class SignUpForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
-    matchR = RadioField('Recipe', validators=[DataRequired()])
-    matchM = RadioField('Meal Plan', validators=[DataRequired()])
+    match = RadioField('Search Options', validators=[DataRequired()], choices=[('recipe', 'Recipe'),('plan', 'Meal Plan')])
 
 class addRecipe(FlaskForm):
     
@@ -25,8 +24,3 @@ class addRecipe(FlaskForm):
     serving = IntegerField('Serving', validators=[DataRequired()])
     prep_time = IntegerField('Prep Time', validators=[DataRequired()])
     image = FileField('Photo Upload', validators= [FileRequired(), FileAllowed(['jpg','png','Images only!'])])
-    
-    # ingredients = SelectMultipleField(u'Ingredients', validators=[DataRequired()], choices=[('cpp', 'Carrots'), ('py', 'Plums'), ('text', 'Something Else')])
-    # ingredients = SelectMultipleField('Ingredients', choices=[('crr', Carrot), ('lt', 'Lettuce), ('or', 'Orange'), ('pl', 'plums)] )
-    # instructions = StringField('Instructions', validators=[DataRequired()])
-    # add = SubmitField('Add')

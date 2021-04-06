@@ -1,4 +1,4 @@
-import random
+import random, string
 from app import app
 from flask import render_template, url_for, redirect, flash, request, session, jsonify
 from werkzeug.security import check_password_hash
@@ -134,8 +134,8 @@ def plan():
         return redirect(url_for('home'))
     return render_template('generate_plan.html', log=session.get('logged_in'))
 
-@app.route("/planview")
-def plan_view():
+@app.route("/planview/<int:id>")
+def plan_view(id):
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
     return render_template('plan_view.html', log=session.get('logged_in'))
@@ -201,6 +201,24 @@ def create_plan():
             return jsonify({ 'data': result[0], 'total': result[1]})
     return jsonify({'data': 'NOK'})
 
+@app.route("/api/save", methods=['POST'])
+def save_plan():
+    if session.get('logged_in') == None:
+        return jsonify({'data': 'NOK'})
+    if request.method == 'POST':
+        global current_meal_plan, userid
+        name = request.form.get('name')
+        if name == 'NONE':
+            name = ''.join(random.choice(string.ascii_letters) for i in range(len(10)))
+            result = saveMealPlan(current_meal_plan, name, userid)
+        else:
+            result = saveMealPlan(current_meal_plan, name, userid)
+        if result == None:
+            return jsonify({'data': 'NOK'})
+        else:
+            current_meal_plan, current_total = None, None
+            return jsonify({'data': result})
+    return jsonify({'data': 'NOK'})
 
 @app.after_request
 def add_header(response):

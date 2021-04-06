@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="static/css/loginjs.css"> 
 {% endblock %}
 
 {% block js %}
@@ -22,9 +23,10 @@
             <a href="#" class='btn py-2 px-4 bg-btn text-white gen'>Generate</a>
         </div>
     </div>
-    <div class='mb-5 card-section'>
+    <div class='mb-5 card-section hidden'>
         <div class="meal"></div>
-        <button class="btn bg-btn text-white fs-3 mt-4 center save hidden">Save Plan</button>
+        <input  type="text" class="center-lr" name="name" id="name" placeholder="Enter Name for Meal Plan">
+        <button class="btn bg-btn text-white fs-3 ms-3 center save">Save Plan</button>
     </div>
 </div>
 {% endblock %}

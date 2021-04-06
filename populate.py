@@ -33,7 +33,7 @@ lines = [['recipeID int auto_increment', 'creationDate date', 'recipeName varcha
          ['ingredientID int auto_increment', 'ingredientName varchar(255)','primary key(ingredientID)'], \
          ['measurementID int auto_increment','quantity decimal(8,2)','unit varchar(50)','primary key(measurementID)'], \
          ['recipeID int', 'stepNumber int', 'direction varchar(255)', 'primary key(recipeID, stepNumber)', 'foreign key(recipeID) references Recipe(recipeID) on delete cascade'], \
-         ['mealPlanID int','recipeID int','primary key(mealPlanID, recipeID)','foreign key(mealPlanID) references MealPlan(mealPlanID) on delete cascade','foreign key(recipeID) references Recipe(recipeID) on delete cascade'], \
+         ['mealPlanID int','recipeID int', 'dayNum int', 'mealNum int', 'primary key(mealPlanID, recipeID, dayNum, mealNum)','foreign key(mealPlanID) references MealPlan(mealPlanID) on delete cascade','foreign key(recipeID) references Recipe(recipeID) on delete cascade'], \
          ['mealPlanID int','userID int','primary key(mealPlanID)','foreign key(mealPlanID) references MealPlan(mealPlanID) on delete cascade','foreign key(userID) references User(userID) on delete cascade'], \
          ['ingredientID int','userID int','primary key(ingredientID, userID)','foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade','foreign key(userID) references User(userID) on delete cascade'], \
          ['recipeID int','ingredientID int','measurementID int','primary key(recipeID, ingredientID)','foreign key(recipeID) references Recipe(recipeID) on delete cascade','foreign key(ingredientID) references Ingredient(ingredientID) on delete cascade','foreign key(measurementID) references Measurement(measurementID) on delete cascade'], \
@@ -75,25 +75,20 @@ DELIMITER //
         INSERT INTO Instruction(recipeID, stepNumber, direction) VALUES(rid, step, direct);
     END //
 DELIMITER ;
-DELIMITER //  
-    CREATE PROCEDURE calorieCount(IN calories int)
+DELIMITER //
+    CREATE PROCEDURE calorieCount(IN calories int, amt int)
     BEGIN
-        SELECT * FROM Recipe WHERE calorieCount <= calories LIMIT 500;
+        SELECT * FROM Recipe WHERE calorieCount <= calories LIMIT amt;
+    END //
+DELIMITER ;
+DELIMITER //
+    CREATE PROCEDURE getPlanDay(IN mid int, day int)
+    BEGIN
+        SELECT dayNum, mealNum, i.recipeID, inputServing, calorieCount FROM includes i JOIN Recipe r ON i.recipeID = r.recipeID WHERE i.mealPlanID = mid AND i.dayNum = day;
     END //
 DELIMITER ;
 """
 
-"""
-/*==========================================CREATION OF TRIGGER===============================================*/
-DELIMITER $$
-    CREATE TRIGGER Work_Trigger
-    AFTER insert ON worker
-    FOR EACH ROW
-    BEGIN
-        insert into worker_log(workername,log_time) values (new.workername,curtime());
-    END $$
-DELIMITER ;
-"""
 def createTable():
     result = []
     table_stmt = 'CREATE TABLE %s(%s);\r'
@@ -225,7 +220,7 @@ if __name__ == '__main__':
             r.write(recipe_stmt % (i+1, created_date, recipe_name, preptime, serving, image_name, calorie))
             recipes.append((i+1, ingredient_list))
 
-        for i in range(7):                 
+        for i in range(4):                 
             if i == 0:
                 r.write("/*======================================INSERTING Relationship: contains======================================*/\r")
                 for i in recipes:
@@ -254,27 +249,27 @@ if __name__ == '__main__':
                         if x[0] not in ingredient_list:
                             ingredient_list.append(x[0])
                             r.write(kitchen_stmt % (x[0], i+1))
-            elif i == 4:
-                r.write("/*======================================INSERTING MealPlan======================================*/\r")
-                number = random.randint(1, 30)
-                for i in range(number):
-                    name = fake.text(max_nb_chars=15)
-                    created_date = fake.past_date().strftime('%Y-%m-%d')
-                    r.write(plan_stmt % (name, created_date))
-            elif i == 5:
-                r.write("/*======================================INSERTING Relationship: includes======================================*/\r")
-                for i in range(number):
-                    unique = []
-                    for j in range(3):
-                        recipe = random.randint(1, num)
-                        if recipe not in unique:
-                            r.write(includes_stmt % (i+1, recipe))
-                            unique.append(recipe)
-            elif i == 6:
-                r.write("/*======================================INSERTING Relationship: has======================================*/\r")
-                for i in range(number):
-                    user = random.randint(1, nusers)
-                    r.write(has_stmt % (i+1, user))
+            # elif i == 4:
+            #     r.write("/*======================================INSERTING MealPlan======================================*/\r")
+            #     number = random.randint(1, 5)
+            #     for i in range(number):
+            #         name = fake.text(max_nb_chars=15)
+            #         created_date = fake.past_date().strftime('%Y-%m-%d')
+            #         r.write(plan_stmt % (name, created_date))
+            # elif i == 5:
+            #     r.write("/*======================================INSERTING Relationship: includes======================================*/\r")
+            #     for i in range(number):
+            #         unique = []
+            #         for j in range(21):
+            #             recipe = random.randint(1, num)
+            #             if recipe not in unique:
+            #                 r.write(includes_stmt % (i+1, recipe))
+            #                 unique.append(recipe)
+            # elif i == 6:
+            #     r.write("/*======================================INSERTING Relationship: has======================================*/\r")
+            #     for i in range(number):
+            #         user = random.randint(1, nusers)
+            #         r.write(has_stmt % (i+1, user))
         print("Finished Inserting Recipe INSERT Statements and Connection Statements" + "."*10)
         print("Inserting Stored Procedure Statements" + "."*10)
         r.write(extra)

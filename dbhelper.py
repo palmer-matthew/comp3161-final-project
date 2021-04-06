@@ -47,7 +47,7 @@ def executeProcedure(procedure, args, connection):
         cursor = None
         cursor = connection.cursor()
         cursor.callproc(procedure, args)
-        results  = cursor.fetchall()
+        results  = cursor.stored_results()
         return results
     except Error as e:
         print(f'Log: Error {e.msg}')
