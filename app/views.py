@@ -127,7 +127,10 @@ def profile():
     global userid, current_meal_plan
     current_meal_plan = None
     result = getIngredientsinKitchen(userid)
-    return render_template('profile.html', log=session.get('logged_in'), name=session.get('name'), uname=session.get('username'), kitchen=result)
+    result1 = getRecentPlans(userid)
+    result2 = getRecentRecipes(userid)
+    return render_template('profile.html', log=session.get('logged_in'), name=session.get('name'), \
+        recipes=result2, plans=result1, uname=session.get('username'), kitchen=result)
 
 @app.route("/plan")
 def plan():

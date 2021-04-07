@@ -23,49 +23,46 @@
             <p>Last Name: {{ name[1] }}</p>
         </div>
     </div>
-    <h1 class="fw-bold my-5"> Recent Created Recipes:</h1>
+    <h1 class="fw-bold my-5"> Recently Created Recipes:</h1>
     <div class='card-section'>
-        <a href="{{ url_for('recipe')}}"><div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                    <p class="fs-6 fw-light nbm">Servings: 6</p>
-                </div>
-                <p class="nbm me-4">Created: 2020-03-12</p>
+        {% if recipes == None or recipes == []%}
+            <div class="card">
+                <p class="center text-capitalize fw-bold fs-5 nbm">NO CREATED RECIPES</p>
             </div>
-        </div></a>
-        <div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Recipe</p>
-                    <p class="fs-6 fw-light nbm">Servings: 6</p>
-                </div>
-                <p class="nbm me-4">Created: 2020-03-12</p>
-            </div>
-        </div>
+        {% else %}
+            {% for i in recipes %}
+                <a href="#"><div class="py-2 card grid-card mb-3">
+                    <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
+                    <div class="btn-container">
+                        <div>
+                            <p class="text-capitalize fw-bold fs-5 nbm">{{ i[1]}}</p>
+                            <p class="fs-6 fw-light nbm">Servings: {{ i[2]}}</p>
+                        </div>
+                        <p class="nbm me-4">Created: {{ i[3]}}</p>
+                    </div>
+                </div></a>
+            {% endfor %}
+        {% endif %}
     </div>
-    <h1 class="fw-bold my-5"> Recent Created Meal Plans:</h1>
+    <h1 class="fw-bold my-5"> Recently Created Meal Plans:</h1>
     <div class='card-section'>
-        <a href="#"><div class="py-3 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/menu_book_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Meal Plan</p>
-                </div>
-                <p class="nbm me-4">Created: 2020-03-12</p>
+        {% if plans == None or plans == []%}
+            <div class="card">
+                <p class="center text-capitalize fw-bold fs-5 nbm">NO CREATED MEAL PLANS</p>
             </div>
-        </div></a>
-        <div class="py-3 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/menu_book_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Meal Plan</p>
-                </div>
-                <p class="nbm me-4">Created: 2020-03-12</p>
-            </div>
-        </div>
+        {% else %}
+            {% for i in plans %}
+                <a href="{{url_for('plan_view', id=i[0])}}"><div class="py-3 card grid-card mb-3">
+                    <img class='image' src="{{ url_for('static', filename='img/menu_book_black_24dp.svg')}}" alt="">
+                    <div class="btn-container">
+                        <div>
+                            <p class="text-capitalize fw-bold fs-5 nbm">{{ i[1]}}</p>
+                        </div>
+                        <p class="nbm me-4">Created: {{ i[2]}}</p>
+                    </div>
+                </div></a>
+            {% endfor %}
+        {% endif %}
     </div>
     <div class="btn-container">
         <h1 class="fw-bold my-5"> Whats In Your Kitchen:</h1>
@@ -96,7 +93,6 @@
                 </div>
             {% endfor %}
         {% endif %}
-        
     </div>
 </div>
 {% endblock %}

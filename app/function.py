@@ -353,3 +353,31 @@ def getMealPlan(id):
         #     queries.append(day)
         # close(conn)
         # return ['OK', name, queries]
+
+def getRecentPlans(userid):
+    conn = connect(database='planner')
+    query = 'SELECT m.mealPlanID, planName, dateCreated FROM MealPlan m JOIN has h ON \
+        m.mealPlanID = h.mealPlanID WHERE userID = %d ORDER BY dateCreated DESC LIMIT 3;'
+    result = executeRQuery(query % (int(userid)), conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        if result == None:
+            return 'NMP'
+        return result
+
+def getRecentRecipes(userid):
+    conn = connect(database='planner')
+    query = 'SELECT r.recipeID, recipeName, inputServing, creationDate FROM Recipe r JOIN adds a ON \
+         r.recipeID = a.recipeID WHERE userID = %d ORDER BY creationDate DESC LIMIT 3 '
+    result = executeRQuery(query % (int(userid)), conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        if result == None:
+            return 'NMP'
+        return result
