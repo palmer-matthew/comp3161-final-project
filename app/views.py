@@ -1,4 +1,4 @@
-import random
+import random, string
 from app import app
 from flask import render_template, url_for, redirect, flash, request, session, jsonify
 from werkzeug.security import check_password_hash
@@ -9,7 +9,7 @@ from .globals import *
 
 @app.route("/")
 def home():
-    return render_template('home.html', log=session.get('log'))
+    return render_template('home.html', log=session.get('logged_in'))
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
@@ -118,15 +118,19 @@ def search():
                 if result == 'OK':
                     return redirect(url_for('plan-view'))
             flash_errors(searchF)
-    return render_template('search.html', form=searchF)
+    return render_template('search.html', form=searchF, log=session.get('logged_in'))
 
 @app.route("/profile")
 def profile():
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    global userid
+    global userid, current_meal_plan
+    current_meal_plan = None
     result = getIngredientsinKitchen(userid)
-    return render_template('profile.html', log=session.get('logged_in'), name=session.get('name'), uname=session.get('username'), kitchen=result)
+    result1 = getRecentPlans(userid)
+    result2 = getRecentRecipes(userid)
+    return render_template('profile.html', log=session.get('logged_in'), name=session.get('name'), \
+        recipes=result2, plans=result1, uname=session.get('username'), kitchen=result)
 
 @app.route("/plan")
 def plan():
@@ -134,11 +138,20 @@ def plan():
         return redirect(url_for('home'))
     return render_template('generate_plan.html', log=session.get('logged_in'))
 
-@app.route("/planview")
-def plan_view():
+@app.route("/planview/<int:id>")
+def plan_view(id):
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    return render_template('plan_view.html', log=session.get('logged_in'))
+    result = getMealPlan(int(id))
+    if result == None:
+        flash('Could Not Retrieve Meal Plan', 'danger')
+        return redirect(url_for('profile'))
+    elif result == 'MPDE':
+        flash('Could Not Retrieve Meal Plan', 'danger')
+        return redirect(url_for('profile'))
+    global current_meal_plan
+    current_meal_plan = result[-1]
+    return render_template('plan_view.html', log=session.get('logged_in'), info=result[-1], name=result[1])
 
 @app.route("/shopping")
 def shopping():
@@ -201,6 +214,25 @@ def create_plan():
             return jsonify({ 'data': result[0], 'total': result[1]})
     return jsonify({'data': 'NOK'})
 
+@app.route("/api/save", methods=['POST'])
+def save_plan():
+    if session.get('logged_in') == None:
+        return jsonify({'data': 'NOK'})
+    if request.method == 'POST':
+        global current_meal_plan, userid
+        name = request.form.get('name')
+        if current_meal_plan != None:
+            if name == 'NONE':
+                name = ''.join(random.choice(string.ascii_letters) for i in range(len(10)))
+                result = saveMealPlan(current_meal_plan, name, userid)
+            else:
+                result = saveMealPlan(current_meal_plan, name, userid)
+        if result == None:
+            return jsonify({'data': 'NOK'})
+        else:
+            current_meal_plan, current_total = None, None
+            return jsonify({'data': result})
+    return jsonify({'data': 'NOK'})
 
 @app.after_request
 def add_header(response):

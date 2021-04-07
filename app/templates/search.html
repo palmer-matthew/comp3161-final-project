@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-
+{% block title %} 
+<title>Search</title>
+{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="static/css/loginjs.css"> 
@@ -9,21 +11,23 @@
 
 {% block main %}
     <div class="container min">
-        <h2 class="fs-1">Search</h2>
-        <form class="text-center d-flex flex-row" action="{{url_for('search')}}" method="POST">
-            {{ form.csrf_token }}
-            {{ form.search(class="center", placeholder="Search") }}
+        <h2 class="fs-1 my-5">Search</h2>
+        <form class="text-center d-flex flex-column" action="{{url_for('search')}}" method="POST">
+            <div class='btn-container'>
+                {{ form.csrf_token }}
+                {{ form.search(class="center", placeholder="Search") }}
             
-            {% for matchRecipe in form.radio %}
-                {{ matchRecipe }} 
-                {{ matchRecipe.label }}
-            {% endfor %}
-
-            {% for matchMealPLan in form.radio %}
-                {{ matchMealPLan }} 
-                {{ matchMealPLan.label }}
-            {% endfor %}
-            <button  type="button" value="Search"> Search </button> 
+                <button class="btn bg-btn text-white fs-4" type="submit">Search</button>
+            </div>
+            <div class="mt-3 ms-5 d-flex flex-row">
+                {% for i in form.match %}
+                    <div class="form-check form-check-inline">
+                        {{ i(class="form-check-input")}}
+                        {{ i.label(class="form-check-label")}}
+                    </div>
+                 {% endfor %}
+            </div>
         </form>
+        <div class="card-section"></div>
     </div>
 {% endblock %}

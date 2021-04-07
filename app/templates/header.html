@@ -6,17 +6,8 @@
           <li><a href="{{url_for('home')}}" class="nav-link px-2 text-white">Home</a></li>
           {% if log == True %}
             <li><a href="{{url_for('profile')}}" class="nav-link px-2 text-white">Profile</a></li>
-            <li class="nav-item dropdown">
-              <a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdown" role="button">
-                Create
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="{{url_for('plan')}}">Create Meal Plan</a></li>
-                <li><a class="dropdown-item" href="#">Create Recipe</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Create Shopping List</a></li>
-              </ul>
-            </li>
+            <li><a href="{{url_for('plan')}}" class="nav-link px-2 text-white">Create Plan</a></li>
+            <li><a href="{{url_for('addrecipe')}}" class="nav-link px-2 text-white">Create Recipe</a></li>
             <li><a href="{{ url_for('search') }}" class="nav-link px-2 text-white">Find</a></li>
           {% endif %}
         </ul>

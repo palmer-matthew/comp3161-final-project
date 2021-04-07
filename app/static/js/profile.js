@@ -38,7 +38,7 @@ window.onload = function(event){
         event.preventDefault();
         let value = select.selectedOptions[0].value;
 
-        if(value == 'null'){
+        if(value == 'null' ){
             console.log('Nothing Happens');
         }else{
 

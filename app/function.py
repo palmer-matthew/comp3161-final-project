@@ -8,6 +8,8 @@ from datetime import date
 
 def addToInventory(userid , iID):
     conn = connect(database='planner')
+    if conn == None:
+        return None
     result = getIngredientsinKitchen(userid, string=False)
     if result == None:
         return result
@@ -26,6 +28,8 @@ def addToInventory(userid , iID):
 
 def addNewRecipe(recipeName, preparationTime, inputServing, imageUpload, calorieCount):
     conn = connect(database='planner')
+    if conn == None:
+        return None
     today = date.today()
     createddate = today.strftime('%Y-%m-%d')
     query = 'INSERT INTO Recipe(creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES("%s", "%s", %d, %d, "%s", %d);'
@@ -46,6 +50,8 @@ def addNewRecipe(recipeName, preparationTime, inputServing, imageUpload, calorie
 
 def addConnections(recipeID, ingredients, instructions, userid):
     conn = connect(database='planner')
+    if conn == None:
+        return None
     link = ingredients.split(',')
     query = 'call insertContains(%d, %d, %d);'
     for i in link:
@@ -69,21 +75,32 @@ def addConnections(recipeID, ingredients, instructions, userid):
     
 def getIngredientsinKitchen(userid, string=True):
     conn = connect(database='planner')
-    if string==True:
-        query = 'call GetKitchen(%d);'
+    if conn == None:
+        return None
+    # if string == True:
+    #     query = 'call GetKitchen(%d);'
+    # else:
+    #     query = 'call GetIntKitchen(%d);'
+    # result = executeRQuery(query % (userid), conn)
+    if string == True:
+        query = 'GetKitchen'
     else:
-        query = 'call GetIntKitchen(%d);'
-    result = executeRQuery(query % (userid), conn, m=True)
-    print(result)
+        query = 'GetIntKitchen'
+    result = executeProcedure(query, [int(userid)], conn)
     if result == None:
         close(conn)
         return None
     else:
         close(conn)
-        return [i[0] for i in result]
+        status = []
+        for i in result:
+            status.extend(i.fetchall())
+        return [i[0] for i in status]
 
 def getIngredients():
     conn = connect(database='planner')
+    if conn == None:
+        return None
     query = 'SELECT * FROM Ingredient i ORDER BY ingredientName;'
     result = executeRQuery(query, conn)
     if result == None:
@@ -98,6 +115,8 @@ def getIngredients():
 
 def getMeasurements():
     conn = connect(database='planner')
+    if conn == None:
+        return None
     query = 'SELECT * FROM Measurement i ORDER BY unit;'
     result = executeRQuery(query, conn)
     if result == None:
@@ -116,6 +135,8 @@ IDENTIFIED BY 'password123';
 """
 def getShoppingList(planid):
     conn = connect(database='planner')
+    if conn == None:
+        return None
     query = 'call GetShoppingList(%d);'
     result = executeRQuery(query % (planid), conn)
     if result == None:
@@ -127,6 +148,8 @@ def getShoppingList(planid):
 
 def addUser(username, password, fname, lname):
     conn = connect(database= 'planner')
+    if conn == None:
+        return None
     query = 'INSERT INTO User(fname,lname,username, user_password) VALUES("%s", "%s", "%s", "%s");\r'
     hash = generate_password_hash(password, method='pbkdf2:sha256')
     result = executeNQuery(query % (fname,lname, username, hash), conn)
@@ -139,6 +162,8 @@ def addUser(username, password, fname, lname):
 
 def checkUser(username):
     conn = connect(database= "planner")
+    if conn == None:
+        return None
     query = 'SELECT DISTINCT userID FROM User WHERE username = "%s";'
     result = executeRQuery(query % (username), conn)
     if result == None:
@@ -153,6 +178,8 @@ def checkUser(username):
 
 def getUser(username):
     conn = connect(database= "planner")
+    if conn == None:
+        return None
     query = 'SELECT DISTINCT * FROM User WHERE username = "%s";'
     result = executeRQuery(query % (username), conn)
     if result == None or result == []:
@@ -166,6 +193,8 @@ def getUser(username):
 
 def SearchRecipe(search):
     conn = connect(database= "planner")
+    if conn == None:
+        return None
     query = 'SELECT DISTINCT * FROM Recipe WHERE recipeName LIKE "%s" LIMIT 500;'
     result = None
     recipes = executeRQuery(query % (search), conn)
@@ -180,6 +209,8 @@ def SearchRecipe(search):
 
 def SearchMealPlan(search):
     conn = connect(database= "planner")
+    if conn == None:
+        return None
     query = 'SELECT DISTINCT * FROM mealPLan WHERE planName LIKE "%s" LIMIT 500;'
     result = None
     recipes = executeRQuery(query % (search), conn)
@@ -196,6 +227,8 @@ def SearchMealPlan(search):
 
 def createMealPlan(calorieCount=None):
     conn = connect(database='planner')
+    if conn == None:
+        return None
     query = "SELECT COUNT(recipeID) FROM Recipe;"
     result = executeRQuery(query, conn)
     if result == None or result == []:
@@ -230,64 +263,121 @@ def createMealPlan(calorieCount=None):
                 final.append(tpl)
             return final, sum(total)
     else:
-        pass
-        # close(conn)
-        # nrecipe, lst, distinct = [i[0] for i in result][0], [], []
-        # for i in range(7):
-        #     m1, m2, m3 = random.randint(1, nrecipe), random.randint(1, nrecipe), random.randint(1, nrecipe)
-        #     if m1 not in distinct:
-        #         distinct.append(m1)
-        #     if m2 not in distinct:
-        #         distinct.append(m2)
-        #     if m3 not in distinct:
-        #         distinct.append(m3)
-        #     lst.append((m1,m2,m3))
-        # query = f"SELECT recipeID, recipeName, inputServing, calorieCount FROM Recipe WHERE recipeID IN {tuple(distinct)}"
-        # result = executeRQuery(query, conn)
-        # if result == None or result == []:
-        #     close(conn)
-        #     return None
-        # else:
-        #     final, total = [], []
-        #     for i in lst:
+        avg = int(int(calorieCount) / 21)
+        query = 'call calorieCount(%d, %d);'
+        result = executeRQuery(query % (avg, 500), conn)
+        if result == None or result == []:
+            close(conn)
+            return None
+        else:
+            final, total = [], []
+            for i in range(7):
+                tpl = []
+                for j in range(3):
+                    meal = random.choice(result)
+                    tpl.append(meal)
+                    total.append(meal[-1])
+                final.append(tpl)
+            return final, sum(total)
+        
+
+def saveMealPlan(mealPlan, name, userid):
+    today = date.today()
+    createddate = today.strftime('%Y-%m-%d')
+    query = 'INSERT INTO MealPlan(planName, dateCreated) VALUES("%s", "%s");'
+    conn = connect(database='planner')
+    if conn == None:
+        return None
+    result = executeNQuery(query % (name, createddate), conn)
+    if result == None:
+        return None
+    query = 'SELECT mealPlanID FROM MealPlan ORDER BY mealPlanID DESC LIMIT 1;'
+    result = executeRQuery(query, conn)
+    if result == None:
+        return None
+    else:
+        id = result[0][0]
+        includes_stmt = 'INSERT INTO includes(mealPlanID, recipeID, dayNum, mealNum) VALUES(%d, %d, %d, %d);'
+        has_stmt = 'INSERT INTO has(mealPlanID, userID) VALUES(%d, %d);'
+        for i, n in enumerate(mealPlan):
+            for j, val in enumerate(n):
+                result = executeNQuery(includes_stmt % (int(id), int(val[0]), i+1, j+1), conn)
+                if result == None:
+                    return None
+        result = executeNQuery(has_stmt%(int(id), int(userid)),conn)
+        if result == None:
+            return None
+        return ['OK', id]
+
+def getMealPlan(id):
+    conn = connect(database='planner')
+    query = 'SELECT mealPlanID, planName FROM MealPlan WHERE mealPlanID = %d LIMIT 1;'
+    result = executeRQuery(query % (int(id)), conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        if result == []:
+            return 'MPDE'
+        conn = connect(database='planner')
+        id, name = result[0]
+        queries = []
+        query = 'getPlanDay'
+        for i in range(1,8):
+            day = []
+            result = executeProcedure(query, [int(id), int(i)], conn)
+            if result == None:
+                close(conn)
+                return None
+            else:
+                day.append(i)
+                for t in result:
+                    day.append(t.fetchall())              
+            queries.append(day)
+        close(conn)
+        return ['OK', name, queries]
+        
+        # day_stmt = 'getPlanDay(%d, %d);'
+        # for i in range(1,8):
+        #     result = executeRQuery(day_stmt % (int(id), int(i)), conn)
+        #     day = []
+        #     if result == None:
+        #         return None
+        #     else:
+        #         day.append(i)
         #         tpl = []
-        #         for j in i:
-        #             for n in result:
-        #                 if n[0] == j:
-        #                     tpl.append(n)
-        #                     total.append(n[-1])
-        #                     break
-        #         final.append(tpl)
-        #     return final, sum(total)
-        
-        
+        #         for j in result:
+        #             tpl.append(j)
+        #         day.append(tpl)
+        #     queries.append(day)
+        # close(conn)
+        # return ['OK', name, queries]
 
-# def saveMealPlan(mealPlan):
-#     query = 'INSERT INTO MealPlan(MealPlanID, planName, dateCreated) VALUES(%d, "%s", "%s") From recipe r JOIN calorieCount c \
-#          ON r.recipeID = c. LIMIT 1;'
-#     result = [i[0] for i in executeRQuery(query % (calorieCount), conn)]
-#     if result == None or result == []:
-#         close(conn)
-#         return None
-#     else:
-#         close(conn)
-#         return [i[0].upper() for i in result]
+def getRecentPlans(userid):
+    conn = connect(database='planner')
+    query = 'SELECT m.mealPlanID, planName, dateCreated FROM MealPlan m JOIN has h ON \
+        m.mealPlanID = h.mealPlanID WHERE userID = %d ORDER BY dateCreated DESC LIMIT 3;'
+    result = executeRQuery(query % (int(userid)), conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        if result == None:
+            return 'NMP'
+        return result
 
-
-
-# def randomMeal(MealPlanID):
-#     conn = connect(database='planner')
-#     query= 'SELECT  FROM table  ORDER BY RAND () LIMIT 1' 
-
-# def generateMealPlan(recipeId):
-#     conn = connect(database='planner')
-#     query = 'SELECT * FROM recipe WHERE recipeName = %s LIMIT 21;'
-#     result = [i[0] for i in executeRQuery(query % (recipeId), conn)]
-#     if result == None or result == []:
-#         close(conn)
-#         return None
-#     else:
-#         close(conn)
-#         return [i[0].upper() for i in result]
-
-
+def getRecentRecipes(userid):
+    conn = connect(database='planner')
+    query = 'SELECT r.recipeID, recipeName, inputServing, creationDate FROM Recipe r JOIN adds a ON \
+         r.recipeID = a.recipeID WHERE userID = %d ORDER BY creationDate DESC LIMIT 3 '
+    result = executeRQuery(query % (int(userid)), conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        close(conn)
+        if result == None:
+            return 'NMP'
+        return result
