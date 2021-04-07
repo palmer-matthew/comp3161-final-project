@@ -9,60 +9,23 @@
 
 
 {% block main %}
+{% include 'flashmssgs.html' %}
 <div class="container">
     <div class="btn-container">
-        <h1 class="fw-bold my-5"> Shopping List for Meal Plan: sjkdfhsdjkfh</h1>
-        <a href="{{ url_for('plan_view')}}" class='btn py-2 px-5 bg-btn text-white'>Back to Meal Plan</a>
+        <h1 class="fw-bold my-5"> Shopping List for Meal Plan: {{ name }}</h1>
+        <a href="{{ url_for('plan_view', id=id)}}" class='btn py-2 px-5 bg-btn text-white'>Back to Meal Plan</a>
     </div>
     <div class='mb-5 card-section'>
-        <div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Ingredient</p>
+        {% for i in items %}
+            <div class="py-2 card grid-card mb-3">
+                <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
+                <div class="btn-container">
+                    <div>
+                        <p class="text-capitalize fw-bold fs-5 nbm">{{ i }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Ingredient</p>
-                </div>
-            </div>
-        </div>
-        <div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Ingredient</p>
-                </div>
-            </div>
-        </div>
-        <div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Ingredient</p>
-                </div>
-            </div>
-        </div>
-        <div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Ingredient</p>
-                </div>
-            </div>
-        </div>
-        <div class="py-2 card grid-card mb-3">
-            <img class='image' src="{{ url_for('static', filename='img/set_meal_black_24dp.svg')}}" alt="">
-            <div class="btn-container">
-                <div>
-                    <p class="text-capitalize fw-bold fs-5 nbm">Name of Ingredient</p>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

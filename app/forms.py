@@ -18,7 +18,6 @@ class SearchForm(FlaskForm):
     match = RadioField('Search Options', validators=[DataRequired()], choices=[('recipe', 'Recipe'),('plan', 'Meal Plan')])
 
 class addRecipe(FlaskForm):
-    
     recipe_name = StringField('Recipe Name', validators=[DataRequired()])   
     calorie_count = IntegerField('Calorie Count', validators=[DataRequired()])
     serving = IntegerField('Serving', validators=[DataRequired()])

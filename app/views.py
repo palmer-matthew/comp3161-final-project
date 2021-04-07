@@ -140,6 +140,8 @@ def plan():
 
 @app.route("/planview/<int:id>")
 def plan_view(id):
+    global current_meal_plan, mpid, mname
+    mpid = id
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
     result = getMealPlan(int(id))
@@ -148,16 +150,22 @@ def plan_view(id):
         return redirect(url_for('profile'))
     elif result == 'MPDE':
         flash('Could Not Retrieve Meal Plan', 'danger')
-        return redirect(url_for('profile'))
-    global current_meal_plan
+        return redirect(url_for('profile')) 
     current_meal_plan = result[-1]
+    mname = result[1]
     return render_template('plan_view.html', log=session.get('logged_in'), info=result[-1], name=result[1])
 
 @app.route("/shopping")
 def shopping():
+    global mpid, mname
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    return render_template('shopping.html', log=session.get('logged_in'))
+    result = getShoppingList(int(mpid))
+    if result == None:
+        flash('Could Not Retrieve Shopping List', 'danger')
+        return redirect(url_for('plan_view', id=mpid))
+    items = result
+    return render_template('shopping.html', log=session.get('logged_in'), items=items, name=mname, id=mpid)
 
 @app.route("/recipe")
 def recipe():
