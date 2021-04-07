@@ -55,16 +55,20 @@ def addConnections(recipeID, ingredients, instructions, userid):
     if ingredients in [None, ''] or instructions in [None, '']:
         return None
     link = ingredients.split(',')
-    query = 'call insertContains(%d, %d, %d);'
+    # query = 'call insertContains(%d, %d, %d);'
+    query = 'insertContains'
     for i in link:
         part = list(map(int, i.split('|')))
-        result = executeNQuery(query % (int(recipeID), part[1], part[0]), conn)
+        # result = executeNQuery(query % (int(recipeID), part[1], part[0]), conn)
+        result = executeProcedure(query, [int(recipeID), part[1], part[0]], conn)
         if result == None:
             return None
     direct = instructions.split('|')
-    query = 'call insertInstruction(%d, %d, "%s");'
+    # query = 'call insertInstruction(%d, %d, "%s");'
+    query = 'insertInstruction'
     for i, val in enumerate(direct):
-        result = executeNQuery(query % (int(recipeID), i+1, val), conn)
+        # result = executeNQuery(query % (int(recipeID), i+1, val), conn)
+        result = executeProcedure(query, [int(recipeID), i+1, val], conn)
         if result == None:
             return None
     query = 'INSERT INTO adds(recipeID, userID) VALUES(%d, %d);'
@@ -139,13 +143,19 @@ def getShoppingList(planid):
     conn = connect(database='planner')
     if conn == None:
         return None
-    query = 'call GetShoppingList(%d);'
-    result = executeRQuery(query % (planid), conn)
+    # query = 'call GetShoppingList(%d);'
+    query = 'GetShoppingList'
+    # result = executeRQuery(query % (planid), conn)
+    result = executeProcedure(query [int(planid)], conn)
     if result == None:
         close(conn)
         return None
     else:
         close(conn)
+        status  = []
+        # return [i[0] for i in result]
+        for i in result:
+            status.extend(i.fetchall())
         return [i[0] for i in result]
 
 def addUser(username, password, fname, lname):
@@ -258,17 +268,23 @@ def createMealPlan(calorieCount=None):
             return final, sum(total)
     else:
         avg = int(int(calorieCount) / 21)
-        query = 'call calorieCount(%d, %d);'
-        result = executeRQuery(query % (avg, 500), conn)
+        # query = 'call calorieCount(%d, %d);'
+        query = 'calorieCount'
+        # result = executeRQuery(query % (avg, 500), conn)
+        result = executeProcedure(query, [avg, 500], conn)
         if result == None or result == []:
             close(conn)
             return None
         else:
+            status = []
+            for i in result:
+                status.extend(i.fetchall())
             final, total = [], []
             for i in range(7):
                 tpl = []
                 for j in range(3):
-                    meal = random.choice(result)
+                    # meal = random.choice(status)
+                    meal = random.choice(status)
                     tpl.append(meal)
                     total.append(meal[-1])
                 final.append(tpl)
