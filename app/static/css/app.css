@@ -62,10 +62,13 @@ a:hover{
     background-color: #fff;
 }
 
-.min{
+.card-min{
     min-height: 500px;
-    height: 700px;
+}
 
+.min{
+    min-height: 700px;
+    height: 700px;
 }
 
 .pbody{

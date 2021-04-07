@@ -1,7 +1,9 @@
 window.onload = function(event){
     event.preventDefault();
+
     pass_regex = /^[\w\s\(@!*)]+$/;
     number_regex = /^[1-9]\d{1,5}$/;
+    var alphaspace_regex = /^[\w\s]+$/;
 
     const hidden = document.querySelector('.hidden');
     const conatiner = document.querySelector('.min');
@@ -66,7 +68,7 @@ window.onload = function(event){
                                     break;
                             }
                             let recipe = `
-                            <div class="py-2 card grid-card mb-3">
+                            <a href='/recipe/${element[0]}'><div class="py-2 card grid-card mb-3">
                                 <img class='image' src="/static/img/dinner_dining_black_24dp.svg" alt="">
                                 <div class="btn-container">
                                     <div>
@@ -75,7 +77,7 @@ window.onload = function(event){
                                     </div>
                                     <p class="nbm me-4">Calories: ${element[3]}</p>
                                 </div>
-                            </div>
+                            </div></a>
                             `;
                             start += recipe;
                         }
@@ -127,7 +129,7 @@ window.onload = function(event){
                                     break;
                             }
                             let recipe = `
-                            <div class="py-2 card grid-card mb-3">
+                            <a href='/recipe/${element[0]}'><div class="py-2 card grid-card mb-3">
                                 <img class='image' src="/static/img/dinner_dining_black_24dp.svg" alt="">
                                 <div class="btn-container">
                                     <div>
@@ -136,7 +138,7 @@ window.onload = function(event){
                                     </div>
                                     <p class="nbm me-4">Calories: ${element[3]}</p>
                                 </div>
-                            </div>
+                            </div></a>
                             `;
                             start += recipe;
                         }
@@ -161,7 +163,6 @@ window.onload = function(event){
 
         event.preventDefault();
         let data =  name.value;
-        let alphaspace_regex = /^[\w\s]+$/
         // Sanitization of errors
 
         if(data == "" && data.match(alphaspace_regex) == null){

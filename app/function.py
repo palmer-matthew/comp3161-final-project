@@ -191,39 +191,31 @@ def getUser(username):
         return result 
 
 
-def SearchRecipe(search):
+def searchRecipe(search):
     conn = connect(database= "planner")
     if conn == None:
         return None
-    query = 'SELECT DISTINCT * FROM Recipe WHERE recipeName LIKE "%s" LIMIT 500;'
-    result = None
-    recipes = executeRQuery(query % (search), conn)
-    for res in result:
-        print(res)
-    if result == None or result == []:
+    query = f'SELECT DISTINCT recipeID, recipeName, inputServing, calorieCount FROM Recipe WHERE recipeName LIKE "%{search}%" LIMIT 10;'
+    recipe = executeRQuery(query, conn)
+    if recipe == None:
         close(conn)
         return None
     else:
         close(conn)
-        return None 
+        return recipe
 
-def SearchMealPlan(search):
+def searchMealPlan(search):
     conn = connect(database= "planner")
     if conn == None:
         return None
-    query = 'SELECT DISTINCT * FROM mealPLan WHERE planName LIKE "%s" LIMIT 500;'
-    result = None
-    recipes = executeRQuery(query % (search), conn)
-    for res in result:
-        print(res)
-    if result == None or result == []:
+    query = f'SELECT DISTINCT * FROM MealPlan WHERE planName LIKE "%{search}%" LIMIT 10;'
+    plan = executeRQuery(query, conn)
+    if plan == None:
         close(conn)
         return None
     else:
         close(conn)
-        return None
-
-
+        return plan
 
 def createMealPlan(calorieCount=None):
     conn = connect(database='planner')
@@ -287,13 +279,16 @@ def saveMealPlan(mealPlan, name, userid):
     query = 'INSERT INTO MealPlan(planName, dateCreated) VALUES("%s", "%s");'
     conn = connect(database='planner')
     if conn == None:
+        close(conn)
         return None
     result = executeNQuery(query % (name, createddate), conn)
     if result == None:
+        close(conn)
         return None
     query = 'SELECT mealPlanID FROM MealPlan ORDER BY mealPlanID DESC LIMIT 1;'
     result = executeRQuery(query, conn)
     if result == None:
+        close(conn)
         return None
     else:
         id = result[0][0]
@@ -303,10 +298,13 @@ def saveMealPlan(mealPlan, name, userid):
             for j, val in enumerate(n):
                 result = executeNQuery(includes_stmt % (int(id), int(val[0]), i+1, j+1), conn)
                 if result == None:
+                    close(conn)
                     return None
         result = executeNQuery(has_stmt%(int(id), int(userid)),conn)
         if result == None:
+            close(conn)
             return None
+        close(conn)
         return ['OK', id]
 
 def getMealPlan(id):
@@ -381,3 +379,57 @@ def getRecentRecipes(userid):
         if result == None:
             return 'NMP'
         return result
+
+def getRecipe(rid):
+    query = 'SELECT * FROM Recipe WHERE recipeID = %d;'
+    conn = connect(database='planner')
+    if conn == None:
+        return None
+    result = executeRQuery(query % (int(rid)), conn)
+    if result == None:
+        close(conn)
+        return None
+    query = 'SELECT quantity, unit, ingredientName FROM contains c JOIN Ingredient i JOIN Measurement m ON \
+        i.ingredientID = c.ingredientID AND m.measurementID = c.measurementID WHERE c.recipeID = %d'
+    result1 = executeRQuery(query % (int(rid)), conn)
+    if result == None:
+        close(conn)
+        return None
+    else:
+        result.append(result1)
+        query = 'SELECT stepnumber, direction FROM Instruction WHERE recipeID = %d;'
+        result1 = executeRQuery(query % (int(rid)), conn)
+        if result == None:
+            close(conn)
+            return None
+        close(conn)
+        result.append(result1)
+        return ['OK', result]
+
+def sameWeek(mealPlan, name, userid):
+    today = date.today()
+    createddate = today.strftime('%Y-%m-%d')
+    query = 'INSERT INTO MealPlan(planName, dateCreated) VALUES("%s", "%s");'
+    conn = connect(database='planner')
+    if conn == None:
+        return None
+    result = executeNQuery(query % (name, createddate), conn)
+    if result == None:
+        return None
+    query = 'SELECT mealPlanID FROM MealPlan ORDER BY mealPlanID DESC LIMIT 1;'
+    result = executeRQuery(query, conn)
+    if result == None:
+        return None
+    else:
+        id = result[0][0]
+        includes_stmt = 'INSERT INTO includes(mealPlanID, recipeID, dayNum, mealNum) VALUES(%d, %d, %d, %d);'
+        has_stmt = 'INSERT INTO has(mealPlanID, userID) VALUES(%d, %d);'
+        for i, n in enumerate(mealPlan):
+            for j, val in enumerate(n):
+                result = executeNQuery(includes_stmt % (int(id), int(val[0]), i+1, j+1), conn)
+                if result == None:
+                    return None
+        result = executeNQuery(has_stmt%(int(id), int(userid)),conn)
+        if result == None:
+            return None
+        return ['OK', id]

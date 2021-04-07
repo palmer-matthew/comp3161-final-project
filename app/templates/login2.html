@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Project Login</title>
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="static/css/loginjs.css"> 
+{% endblock %}
+
+{% block main %}
+    <div class="modal-content animate bg-form py-5 center my-5">
+      <h2 class="center mb-4">LOGIN</h2>
+      {% include 'flashmssgs.html' %}
+      <form class="text-center d-flex flex-column" action="{{url_for('login2')}}" method="POST">
+        {{ form.csrf_token }}
+        {{ form.username.label(class="fw-bold fs-5") }}
+        {{ form.username(class="center", placeholder="Username") }}
+
+    
+        {{ form.csrf_token }}
+        {{ form.password.label(class="fw-bold fs-5 mt-3") }}
+        {{ form.password(placeholder="Password") }}
+        <button class="btn bg-btn text-white fs-3 mt-4 center" type="submit">Log in</button> 
+      </form>
+    </div>
+{% endblock %}
+
+

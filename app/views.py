@@ -1,6 +1,6 @@
 import random, string
 from app import app
-from flask import render_template, url_for, redirect, flash, request, session, jsonify
+from flask import render_template, url_for, redirect, flash, request, session, jsonify, send_from_directory
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from .function import *
@@ -31,7 +31,29 @@ def login():
                 flash('You were logged in', 'success')
                 return redirect(url_for('profile'))
         flash_errors(iform)
-    return render_template('login.html', form=iform)
+    return render_template('login.html', form=iform, log=False)
+
+@app.route("/login2", methods=['POST', 'GET'])
+def login2():
+    iform = LoginForm()
+    if request.method == 'POST':
+        if iform.validate_on_submit():
+            username = request.form['username']
+            password = request.form['password']
+            result = getUser(username)
+            if result == None:
+                flash('Sorry Data Could not be Found on', 'danger')
+                return redirect('login2')
+            elif result[4] == password:
+                session['logged_in'] = True
+                global userid
+                session['userId'], userid =  result[0], result[0]
+                session['username'] = result[3]
+                session['name'] = result[1], result[2]
+                flash('You were logged in', 'success')
+                return redirect(url_for('profile'))
+        flash_errors(iform)
+    return render_template('login2.html', form=iform, log=False)
 
 
 @app.route("/signup", methods=['POST', 'GET'])
@@ -80,7 +102,6 @@ def addrecipe():
 
             result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
             if result[0] == 'OK':
-                print(result[1])
                 result = addConnections(result[1], ingredients, instructions, int(userid))
                 if result == 'OK':
                     flash('Recipe Successful Uploaded', 'success')
@@ -101,24 +122,24 @@ def search():
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
     searchF = SearchForm()
-    if searchF.validate_on_submit() and request.form['matchRecipe']:
-        searched = request.form['search']
-        result = SearchRecipe(searched)
-        if result == None:
-            flash('Search not found')
-            if result == 'OK':
-                return redirect(url_for('recipe'))
+    if request.method == 'POST':
+        if searchF.validate_on_submit():
+            stype = request.form['match']
+            searched = request.form['search'] 
+            if stype == 'recipe':
+                result = searchRecipe(searched)
+                if result == None:
+                    flash('Search not found', 'danger')
+                    return redirect(url_for('search'))
+                return render_template('search.html', form=searchF, log=session.get('logged_in'), results=result, t='R')
+            elif stype == 'plan':
+                result = searchMealPlan(searched)
+                if result == None:
+                    flash('Search not found', 'danger')
+                    return redirect(url_for('search'))
+                return render_template('search.html', form=searchF, log=session.get('logged_in'), results=result, t='M')
         flash_errors(searchF)
-    else:
-        if searchF.validate_on_submit() and request.form['matchMealPLan']:
-            searches = request.form['search']
-            result = SearchRecipe(searches)
-            if result == None:
-                flash('Search not found')
-                if result == 'OK':
-                    return redirect(url_for('plan-view'))
-            flash_errors(searchF)
-    return render_template('search.html', form=searchF, log=session.get('logged_in'))
+    return render_template('search.html', form=searchF, log=session.get('logged_in'), results='NY')
 
 @app.route("/profile")
 def profile():
@@ -140,6 +161,8 @@ def plan():
 
 @app.route("/planview/<int:id>")
 def plan_view(id):
+    global current_meal_plan, mpid, mname
+    mpid = id
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
     result = getMealPlan(int(id))
@@ -148,23 +171,38 @@ def plan_view(id):
         return redirect(url_for('profile'))
     elif result == 'MPDE':
         flash('Could Not Retrieve Meal Plan', 'danger')
-        return redirect(url_for('profile'))
-    global current_meal_plan
+        return redirect(url_for('profile')) 
     current_meal_plan = result[-1]
+    mname = result[1]
     return render_template('plan_view.html', log=session.get('logged_in'), info=result[-1], name=result[1])
 
 @app.route("/shopping")
 def shopping():
+    global mpid, mname
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    return render_template('shopping.html', log=session.get('logged_in'))
+    result = getShoppingList(int(mpid))
+    if result == None:
+        flash('Could Not Retrieve Shopping List', 'danger')
+        return redirect(url_for('plan_view', id=mpid))
+    items = result
+    return render_template('shopping.html', log=session.get('logged_in'), items=items, name=mname, id=mpid)
 
-@app.route("/recipe")
-def recipe():
+@app.route("/recipe/<int:id>")
+def recipe(id):
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    return render_template('recipe.html', log=session.get('logged_in'))
+    result = getRecipe(id)
+    if result == None:
+        flash('Unable to retrieve Recipe', 'danger')
+        return redirect(url_for('profile'))
+    return render_template('recipe.html', log=session.get('logged_in'), info=result[1][0], \
+         ingredients=result[1][1], instruct=result[1][-1])
 
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    root_dir = os.getcwd()
+    return send_from_directory(os.path.join(root_dir, app.config['UPLOAD_FOLDER']), filename)
 
 #Server API Endpoints
 @app.route("/api/ingredients", methods=['GET'])
