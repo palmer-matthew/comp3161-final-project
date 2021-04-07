@@ -73,7 +73,8 @@ def getIngredientsinKitchen(userid, string=True):
         query = 'call GetKitchen(%d);'
     else:
         query = 'call GetIntKitchen(%d);'
-    result = executeRQuery(query % (userid), conn)
+    result = executeRQuery(query % (userid), conn, m=True)
+    print(result)
     if result == None:
         close(conn)
         return None
