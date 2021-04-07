@@ -80,7 +80,6 @@ def addrecipe():
 
             result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
             if result[0] == 'OK':
-                print(result[1])
                 result = addConnections(result[1], ingredients, instructions, int(userid))
                 if result == 'OK':
                     flash('Recipe Successful Uploaded', 'success')
@@ -101,23 +100,25 @@ def search():
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
     searchF = SearchForm()
-    if searchF.validate_on_submit() and request.form['matchRecipe']:
-        searched = request.form['search']
-        result = SearchRecipe(searched)
-        if result == None:
-            flash('Search not found')
-            if result == 'OK':
-                return redirect(url_for('recipe'))
+    if request.method == 'POST':
+        if searchF.validate_on_submit():
+            stype = request.form['match'] 
+            if stype == 'recipe':
+                searched = request.form['search']
+                print(searched)
+            # result = SearchRecipe(searched)
+            # if result == None:
+            #     flash('Search not found')
+            #     if result == 'OK':
+            #         return redirect(url_for('recipe'))
+            # flash_errors(searchF)
+            # searches = request.form['search']
+            #     result = SearchRecipe(searches)
+            #     if result == None:
+            #         flash('Search not found')
+            #         if result == 'OK':
+            #             return redirect(url_for('plan-view'))
         flash_errors(searchF)
-    else:
-        if searchF.validate_on_submit() and request.form['matchMealPLan']:
-            searches = request.form['search']
-            result = SearchRecipe(searches)
-            if result == None:
-                flash('Search not found')
-                if result == 'OK':
-                    return redirect(url_for('plan-view'))
-            flash_errors(searchF)
     return render_template('search.html', form=searchF, log=session.get('logged_in'))
 
 @app.route("/profile")

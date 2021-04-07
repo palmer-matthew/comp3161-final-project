@@ -1,7 +1,9 @@
 window.onload = function(event){
     event.preventDefault();
+
     pass_regex = /^[\w\s\(@!*)]+$/;
     number_regex = /^[1-9]\d{1,5}$/;
+    var alphaspace_regex = /^[\w\s]+$/;
 
     const hidden = document.querySelector('.hidden');
     const conatiner = document.querySelector('.min');
@@ -161,7 +163,6 @@ window.onload = function(event){
 
         event.preventDefault();
         let data =  name.value;
-        let alphaspace_regex = /^[\w\s]+$/
         // Sanitization of errors
 
         if(data == "" && data.match(alphaspace_regex) == null){
