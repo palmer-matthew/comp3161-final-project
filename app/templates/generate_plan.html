@@ -15,7 +15,9 @@
 
 {% block main %}
 <div class="container min">
-    <div class="flash"></div>
+    <div class="error">
+        {% include 'flashmssgs.html' %}
+    </div>
     <div class="btn-container my-5">
         <h1 class="fw-bold"> Generate Recipes:</h1>
         <div class="d-flex flex-row ">

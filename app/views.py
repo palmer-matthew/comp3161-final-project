@@ -77,6 +77,11 @@ def signup():
 
 @app.route('/logout')
 def logout():
+    global userid, mpid, current_meal_plan, current_total
+    userid = None
+    mpid = None
+    current_meal_plan = None
+    current_total = None
     session.pop('name', None)
     session.pop('username', None)
     session.pop('logged_in', None)
@@ -234,6 +239,21 @@ def inventory():
         if result == 'OK':
             return jsonify({'data': 'OK'})
     return jsonify({'data': 'NOK'})
+
+@app.route("/api/check", methods=['GET'])
+def check():
+    global userid
+    if session.get('logged_in') == None:
+        return jsonify({'data': 'NOK'})
+    if request.method == 'GET':
+        if userid != None:
+            result = checkWeek(userid)
+            if result == None:
+                return jsonify({'data': 'NOK'})
+            elif result == 'OK':
+                return jsonify({ 'data': 'OK'})
+    return jsonify({'data': 'NOK'})
+
 
 @app.route("/api/plan", methods=['POST'])
 def create_plan():

@@ -406,30 +406,26 @@ def getRecipe(rid):
         result.append(result1)
         return ['OK', result]
 
-def sameWeek(mealPlan, name, userid):
+def checkWeek(userid):
     today = date.today()
-    createddate = today.strftime('%Y-%m-%d')
-    query = 'INSERT INTO MealPlan(planName, dateCreated) VALUES("%s", "%s");'
+    query = 'SELECT dateCreated FROM MealPlan m JOIN has h ON \
+        m.mealPlanID = h.mealPlanID WHERE userID = %d ORDER BY dateCreated DESC LIMIT 1'
     conn = connect(database='planner')
     if conn == None:
         return None
-    result = executeNQuery(query % (name, createddate), conn)
-    if result == None:
-        return None
-    query = 'SELECT mealPlanID FROM MealPlan ORDER BY mealPlanID DESC LIMIT 1;'
-    result = executeRQuery(query, conn)
+    result = executeRQuery(query % (int(userid)), conn)
     if result == None:
         return None
     else:
-        id = result[0][0]
-        includes_stmt = 'INSERT INTO includes(mealPlanID, recipeID, dayNum, mealNum) VALUES(%d, %d, %d, %d);'
-        has_stmt = 'INSERT INTO has(mealPlanID, userID) VALUES(%d, %d);'
-        for i, n in enumerate(mealPlan):
-            for j, val in enumerate(n):
-                result = executeNQuery(includes_stmt % (int(id), int(val[0]), i+1, j+1), conn)
-                if result == None:
-                    return None
-        result = executeNQuery(has_stmt%(int(id), int(userid)),conn)
-        if result == None:
-            return None
-        return ['OK', id]
+        if result == []:
+            return 'OK'
+        else:
+            result = result[0][0]
+            if today.strftime('%Y') == result.strftime('%Y'):
+                tw = today.isocalendar()[1]
+                lw = result.isocalendar()[1]
+                if tw != lw:
+                    return 'OK'
+            else:
+                return 'OK'
+        return None
