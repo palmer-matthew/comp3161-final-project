@@ -1,6 +1,6 @@
 import random, string
 from app import app
-from flask import render_template, url_for, redirect, flash, request, session, jsonify
+from flask import render_template, url_for, redirect, flash, request, session, jsonify, send_from_directory
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from .function import *
@@ -199,6 +199,10 @@ def recipe(id):
     return render_template('recipe.html', log=session.get('logged_in'), info=result[1][0], \
          ingredients=result[1][1], instruct=result[1][-1])
 
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    root_dir = os.getcwd()
+    return send_from_directory(os.path.join(root_dir, app.config['UPLOAD_FOLDER']), filename)
 
 #Server API Endpoints
 @app.route("/api/ingredients", methods=['GET'])
