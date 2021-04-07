@@ -14,7 +14,9 @@
 
 {% block main %}
 <h1 class="mt-5 fw-bold text-center">Add Recipe</h1>
-{% include 'flashmssgs.html' %}
+<div class="error">
+    {% include 'flashmssgs.html' %}
+  </div>
 <div class="container modal-content animate bg-form py-5 center my-5">
     <div>
         <!-- <p></p>  Success Message -->

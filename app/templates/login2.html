@@ -8,10 +8,16 @@
 <link rel="stylesheet" href="static/css/loginjs.css"> 
 {% endblock %}
 
+{% block js %}
+<script src="{{url_for('static', filename='js/login.js')}}"></script>
+{% endblock %}
+
 {% block main %}
     <div class="modal-content animate bg-form py-5 center my-5">
       <h2 class="center mb-4">LOGIN</h2>
-      {% include 'flashmssgs.html' %}
+      <div class="error">
+        {% include 'flashmssgs.html' %}
+      </div>
       <form class="text-center d-flex flex-column" action="{{url_for('login2')}}" method="POST">
         {{ form.csrf_token }}
         {{ form.username.label(class="fw-bold fs-5") }}

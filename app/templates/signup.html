@@ -8,11 +8,16 @@
 <link rel="stylesheet" href="static/css/loginjs.css"> 
 {% endblock %}
 
+{% block js %}
+<script src="{{url_for('static', filename='js/login.js')}}"></script>
+{% endblock %}
 
 {% block main %}
 <div class="modal-content animate bg-form py-5 center my-5">
   <h2 class="center fs-3 mb-4">SIGN UP </h2>
-  {% include 'flashmssgs.html' %}
+  <div class="error">
+    {% include 'flashmssgs.html' %}
+  </div>
   <form class="text-center d-flex flex-column" action="{{url_for('signup')}}" method="POST">
     {{ form.csrf_token }}
     {{ form.username.label(class="fw-bold fs-5") }}
@@ -27,7 +32,7 @@
     {{ form.lname.label(class="fw-bold fs-5 mt-3") }}
     {{ form.lname(placeholder="Last Name")}}
 
-    <button class="btn bg-btn text-white fs-3 mt-4 center" type="submit">Sign Up</button> 
+    <button class="btn bg-btn text-white fs-3 mt-4 center sub" type="submit">Sign Up</button> 
   </form>
 </div>
 {% endblock %}

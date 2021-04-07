@@ -4,6 +4,10 @@ window.onload = function(event){
     var inglist = [];
     var inslist = [];
 
+    var pass_regex = /^[\w\s\(@!*)]+$/;
+    var number_regex = /^[1-9]\d{1,5}$/;
+    var alphaspace_regex = /^[\w\s]+$/;
+
     const addbtn = document.querySelector('.add');
     const adding = document.querySelector('.ai');
     const instruct = document.querySelector('.instruct');
@@ -12,6 +16,7 @@ window.onload = function(event){
     const input = document.querySelector('#instruction');
     const display1 = document.querySelector('.sel-ing');
     const display2 = document.querySelector('.sel-ins');
+    const error = document.querySelector(".error");
 
 
     function r(element){
@@ -124,48 +129,88 @@ window.onload = function(event){
 
     addbtn.addEventListener('click', (event) => {
 
+
         event.preventDefault();
         console.log('You added something');
 
         let form = document.forms[0];
+        let element = form.elements;
+        not_sanitized = false;
+        for(i = 0; i < element.length; i++){
+            switch(element[i].name){
+                case 'recipe_name':
+                    if(element[i].value.match(alphaspace_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        var formfield = document.createElement("input");
-        formfield.type = "hidden";
-        formfield.name = "ingredients";
+                case 'calorie_count':
+                    if(element[i].value.match(number_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        var formfield1 = document.createElement("input");
-        formfield1.type = "hidden";
-        formfield1.name = "instruct";
+                case 'serving':
+                    if(element[i].value.match(number_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        console.log(inglist);
-        console.log(inslist);
+                case 'prep_time':
+                    if(element[i].value.match(number_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        var formval = "";
-        var formval1 = "";
-
-        for(i=0; i < inglist.length; i++){
-            if(i == 0){
-                formval += inglist[i][0];
-            }else{
-                formval += ',' + inglist[i][0];
+                default:
+                    break;
+                
             }
+            if(not_sanitized){
+                error.innerHTML = `<div class="alert alert-danger">Invalid User Input</div>`;
+                break;
+            }
+            
+        }
+        if (!not_sanitized){
+            var formfield = document.createElement("input");
+            formfield.type = "hidden";
+            formfield.name = "ingredients";
+
+            var formfield1 = document.createElement("input");
+            formfield1.type = "hidden";
+            formfield1.name = "instruct";
+
+            console.log(inglist);
+            console.log(inslist);
+
+            var formval = "";
+            var formval1 = "";
+
+            for(i=0; i < inglist.length; i++){
+                if(i == 0){
+                    formval += inglist[i][0];
+                }else{
+                    formval += ',' + inglist[i][0];
+                }
+            }
+
+            for(i=0; i < inslist.length; i++){
+                if(i == 0){
+                    formval1 += inslist[i];
+                }else{
+                    formval1 += '|' + inslist[i];
+                }
+            }
+
+            formfield.value = formval;
+            formfield1.value = formval1
+            form.appendChild(formfield);
+            form.appendChild(formfield1);
+
+            form.submit();
         }
 
-        for(i=0; i < inslist.length; i++){
-            if(i == 0){
-                formval1 += inslist[i];
-            }else{
-                formval1 += '|' + inslist[i];
-            }
-        }
-
-        formfield.value = formval;
-        formfield1.value = formval1
-        form.appendChild(formfield);
-        form.appendChild(formfield1);
-
-        form.submit();
-        
     });
 
     adding.addEventListener('click', (event) => {

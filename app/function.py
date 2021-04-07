@@ -52,6 +52,8 @@ def addConnections(recipeID, ingredients, instructions, userid):
     conn = connect(database='planner')
     if conn == None:
         return None
+    if ingredients in [None, ''] or instructions in [None, '']:
+        return None
     link = ingredients.split(',')
     query = 'call insertContains(%d, %d, %d);'
     for i in link:
