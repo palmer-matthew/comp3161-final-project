@@ -188,11 +188,16 @@ def shopping():
     items = result
     return render_template('shopping.html', log=session.get('logged_in'), items=items, name=mname, id=mpid)
 
-@app.route("/recipe")
-def recipe():
+@app.route("/recipe/<int:id>")
+def recipe(id):
     if session.get('logged_in') == None:
         return redirect(url_for('home'))
-    return render_template('recipe.html', log=session.get('logged_in'))
+    result = getRecipe(id)
+    if result == None:
+        flash('Unable to retrieve Recipe', 'danger')
+        return redirect(url_for('profile'))
+    return render_template('recipe.html', log=session.get('logged_in'), info=result[1][0], \
+         ingredients=result[1][1], instruct=result[1][-1])
 
 
 #Server API Endpoints

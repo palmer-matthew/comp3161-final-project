@@ -27,7 +27,7 @@
                     {% elif j[0] == 3 %}
                         <h5>Dinner</h5>
                     {% endif %}
-                    <div class="py-2 card grid-card mb-3">
+                    <a href="{{ url_for('recipe', id=j[1])}}"><div class="py-2 card grid-card mb-3">
                         <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
                         <div class="btn-container">
                             <div>
@@ -36,7 +36,7 @@
                             </div>
                             <p class="nbm me-4">Calories: {{ j[4] }}</p>
                         </div>
-                    </div>
+                    </div></a>
                 {% endfor %}
             </div>
         {% endfor %}

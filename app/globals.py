@@ -3,3 +3,4 @@ current_total = None
 userid = None
 mpid = None
 mname = None
+rid = None

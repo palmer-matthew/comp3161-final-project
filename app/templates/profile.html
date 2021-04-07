@@ -31,7 +31,7 @@
             </div>
         {% else %}
             {% for i in recipes %}
-                <a href="#"><div class="py-2 card grid-card mb-3">
+                <a href="{{ url_for('recipe', id=i[0])}}"><div class="py-2 card grid-card mb-3">
                     <img class='image' src="{{ url_for('static', filename='img/dinner_dining_black_24dp.svg')}}" alt="">
                     <div class="btn-container">
                         <div>
