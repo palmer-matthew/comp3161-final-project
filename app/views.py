@@ -31,7 +31,29 @@ def login():
                 flash('You were logged in', 'success')
                 return redirect(url_for('profile'))
         flash_errors(iform)
-    return render_template('login.html', form=iform)
+    return render_template('login.html', form=iform, log=False)
+
+@app.route("/login2", methods=['POST', 'GET'])
+def login2():
+    iform = LoginForm()
+    if request.method == 'POST':
+        if iform.validate_on_submit():
+            username = request.form['username']
+            password = request.form['password']
+            result = getUser(username)
+            if result == None:
+                flash('Sorry Data Could not be Found on', 'danger')
+                return redirect('login2')
+            elif result[4] == password:
+                session['logged_in'] = True
+                global userid
+                session['userId'], userid =  result[0], result[0]
+                session['username'] = result[3]
+                session['name'] = result[1], result[2]
+                flash('You were logged in', 'success')
+                return redirect(url_for('profile'))
+        flash_errors(iform)
+    return render_template('login2.html', form=iform, log=False)
 
 
 @app.route("/signup", methods=['POST', 'GET'])
@@ -102,24 +124,22 @@ def search():
     searchF = SearchForm()
     if request.method == 'POST':
         if searchF.validate_on_submit():
-            stype = request.form['match'] 
+            stype = request.form['match']
+            searched = request.form['search'] 
             if stype == 'recipe':
-                searched = request.form['search']
-                print(searched)
-            # result = SearchRecipe(searched)
-            # if result == None:
-            #     flash('Search not found')
-            #     if result == 'OK':
-            #         return redirect(url_for('recipe'))
-            # flash_errors(searchF)
-            # searches = request.form['search']
-            #     result = SearchRecipe(searches)
-            #     if result == None:
-            #         flash('Search not found')
-            #         if result == 'OK':
-            #             return redirect(url_for('plan-view'))
+                result = searchRecipe(searched)
+                if result == None:
+                    flash('Search not found', 'danger')
+                    return redirect(url_for('search'))
+                return render_template('search.html', form=searchF, log=session.get('logged_in'), results=result, t='R')
+            elif stype == 'plan':
+                result = searchMealPlan(searched)
+                if result == None:
+                    flash('Search not found', 'danger')
+                    return redirect(url_for('search'))
+                return render_template('search.html', form=searchF, log=session.get('logged_in'), results=result, t='M')
         flash_errors(searchF)
-    return render_template('search.html', form=searchF, log=session.get('logged_in'))
+    return render_template('search.html', form=searchF, log=session.get('logged_in'), results='NY')
 
 @app.route("/profile")
 def profile():

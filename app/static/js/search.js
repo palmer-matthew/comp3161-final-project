@@ -8,6 +8,8 @@ window.onload = function(event){
     const input = document.querySelector(".srch");
     const srchbtn = document.querySelector(".add");
     const error = document.querySelector(".error");
+    const container = document.querySelector(".min");
+    const card = document.querySelector('.card-section');
 
     srchbtn.addEventListener('click', function(e){
         e.preventDefault();
@@ -23,4 +25,12 @@ window.onload = function(event){
         }
 
     });
+
+    function checkContainer(){
+        if(card.childElementCount >3){
+            container.classList.remove('min');
+        }
+    }
+
+    checkContainer();
 }

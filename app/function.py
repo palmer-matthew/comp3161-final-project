@@ -191,39 +191,31 @@ def getUser(username):
         return result 
 
 
-def SearchRecipe(search):
+def searchRecipe(search):
     conn = connect(database= "planner")
     if conn == None:
         return None
-    query = 'SELECT DISTINCT * FROM Recipe WHERE recipeName LIKE "%s" LIMIT 500;'
-    result = None
-    recipes = executeRQuery(query % (search), conn)
-    for res in result:
-        print(res)
-    if result == None or result == []:
+    query = f'SELECT DISTINCT recipeID, recipeName, inputServing, calorieCount FROM Recipe WHERE recipeName LIKE "%{search}%" LIMIT 10;'
+    recipe = executeRQuery(query, conn)
+    if recipe == None:
         close(conn)
         return None
     else:
         close(conn)
-        return None 
+        return recipe
 
-def SearchMealPlan(search):
+def searchMealPlan(search):
     conn = connect(database= "planner")
     if conn == None:
         return None
-    query = 'SELECT DISTINCT * FROM mealPLan WHERE planName LIKE "%s" LIMIT 500;'
-    result = None
-    recipes = executeRQuery(query % (search), conn)
-    for res in result:
-        print(res)
-    if result == None or result == []:
+    query = f'SELECT DISTINCT * FROM MealPlan WHERE planName LIKE "%{search}%" LIMIT 10;'
+    plan = executeRQuery(query, conn)
+    if plan == None:
         close(conn)
         return None
     else:
         close(conn)
-        return None
-
-
+        return plan
 
 def createMealPlan(calorieCount=None):
     conn = connect(database='planner')
@@ -381,3 +373,6 @@ def getRecentRecipes(userid):
         if result == None:
             return 'NMP'
         return result
+
+def getRecipe(rid):
+    pass
