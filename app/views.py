@@ -105,6 +105,9 @@ def addrecipe():
             filename = secure_filename(imageUpload.filename)
             imageUpload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
+            if ingredients in [None, ''] or instructions in [None, '']:
+                flash('Failed to Add Recipe', 'danger')
+                return redirect(url_for('profile'))
             result = addNewRecipe(recipeName, preparationTime, inputServing, filename, calorieCount)
             if result[0] == 'OK':
                 result = addConnections(result[1], ingredients, instructions, int(userid))
