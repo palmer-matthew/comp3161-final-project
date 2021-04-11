@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
             user_stmt = 'INSERT INTO User(fname,lname,username, user_password) VALUES("%s", "%s", "%s", "%s");\r'
             fake = Faker()
-            nusers = 250000
+            nusers = 25
             fake.unique.clear()
             for i in range(nusers): 
                 r.write(user_stmt % (fake.first_name(), fake.last_name(), fake.unique.user_name() ,fake.password(length=10, special_chars=False)))
@@ -185,7 +185,7 @@ if __name__ == '__main__':
             print("Inserting Recipe INSERT Statements and Connection Statements" + "."*10)
             r.write("/*======================================INSERTING 600,000 Recipes and Connections======================================*/\r")
 
-            num = 650000
+            num = 65
             recipe_stmt = 'INSERT INTO Recipe(recipeID, creationDate, recipeName, preparationTime, inputServing, imageUpload, calorieCount) VALUES(%d, "%s", "%s", %d, %d, "%s", %d);\r'
             contains_stmt = 'INSERT INTO contains(recipeID, ingredientID, measurementID) VALUES(%d, %d, %d);\r'
             instruct_stmt =  'INSERT INTO Instruction(recipeID, stepNumber, direction) VALUES(%d, %d, "%s");\r'

@@ -5,7 +5,7 @@ window.onload = function(event){
     var inslist = [];
 
     var pass_regex = /^[\w\s\(@!*)]+$/;
-    var number_regex = /^[1-9]\d{1,5}$/;
+    var number_regex = /^[1-9]\d{0,5}$/;
     var alphaspace_regex = /^[\w\s]+$/;
 
     const addbtn = document.querySelector('.add');
