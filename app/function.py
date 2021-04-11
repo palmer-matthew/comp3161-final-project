@@ -146,7 +146,7 @@ def getShoppingList(planid):
     # query = 'call GetShoppingList(%d);'
     query = 'GetShoppingList'
     # result = executeRQuery(query % (planid), conn)
-    result = executeProcedure(query [int(planid)], conn)
+    result = executeProcedure(query, [int(planid)], conn)
     if result == None:
         close(conn)
         return None
@@ -156,7 +156,7 @@ def getShoppingList(planid):
         # return [i[0] for i in result]
         for i in result:
             status.extend(i.fetchall())
-        return [i[0] for i in result]
+        return [i[0] for i in status]
 
 def addUser(username, password, fname, lname):
     conn = connect(database= 'planner')
