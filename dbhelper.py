@@ -19,11 +19,11 @@ def connect(database=None):
 def close(connection):
     connection.close()
 
-def executeNQuery(query, connection):
+def executeNQuery(query, connection, m=False):
     try:
         cursor = None
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, multi=m)
         connection.commit()
         cursor.close()
     except Error as e:
@@ -32,11 +32,11 @@ def executeNQuery(query, connection):
         return None
     return 'OK'
 
-def executeRQuery(query, connection):
+def executeRQuery(query, connection, m=False):
     try:
         cursor = None
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, multi=m)
         results = cursor.fetchall()
         return results
     except Error as e:
