@@ -131,47 +131,46 @@ window.onload = function(event){
 
 
         event.preventDefault();
-        console.log('You added something');
 
         let form = document.forms[0];
-        // let element = form.elements;
+        let element = form.elements;
         not_sanitized = false;
-        // for(i = 0; i < element.length; i++){
-        //     switch(element[i].name){
-        //         case 'recipe_name':
-        //             if(element[i].value.match(alphaspace_regex) == null){
-        //                 not_sanitized = true
-        //             }
-        //             break;
+        for(i = 0; i < element.length; i++){
+            switch(element[i].name){
+                case 'recipe_name':
+                    if(element[i].value.match(alphaspace_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        //         case 'calorie_count':
-        //             if(element[i].value.match(number_regex) == null){
-        //                 not_sanitized = true
-        //             }
-        //             break;
+                case 'calorie_count':
+                    if(element[i].value.match(number_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        //         case 'serving':
-        //             if(element[i].value.match(number_regex) == null){
-        //                 not_sanitized = true
-        //             }
-        //             break;
+                case 'serving':
+                    if(element[i].value.match(number_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        //         case 'prep_time':
-        //             if(element[i].value.match(number_regex) == null){
-        //                 not_sanitized = true
-        //             }
-        //             break;
+                case 'prep_time':
+                    if(element[i].value.match(number_regex) == null){
+                        not_sanitized = true
+                    }
+                    break;
 
-        //         default:
-        //             break;
+                default:
+                    break;
                 
-        //     }
-        //     if(not_sanitized){
-        //         error.innerHTML = `<div class="alert alert-danger">Invalid User Input</div>`;
-        //         break;
-        //     }
+            }
+            if(not_sanitized){
+                error.innerHTML = `<div class="alert alert-danger">Invalid User Input</div>`;
+                break;
+            }
             
-        // }
+        }
         if (!not_sanitized){
             var formfield = document.createElement("input");
             formfield.type = "hidden";

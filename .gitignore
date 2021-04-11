@@ -25,4 +25,5 @@ venv.bak/
 #Vscode files
 .vscode/
 
-planner.sql
+#Any SQL Files Generated
+*.sql
